@@ -2,35 +2,12 @@ import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Padding tagihanWidget(Size ukuranLayar) {
+Padding tagihanLunas(Size ukuranLayar) {
   return Padding(
     padding: EdgeInsets.all(20),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'No Pelanggan Anda',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(
-          height: 8,
-        ),
-        Row(
-          children: [
-            Text(
-              '2018082061',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Icon(Icons.keyboard_arrow_down_sharp)
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
         Container(
           width: ukuranLayar.width,
           padding: EdgeInsets.all(13),
@@ -53,25 +30,25 @@ Padding tagihanWidget(Size ukuranLayar) {
               ),
               Row(
                 children: [
-                  Text(
-                    'Rp',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
+                  Icon(
+                    Icons.check_box,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5,
                   ),
                   Text(
-                    '50.000',
+                    'Sudah Terbayarkan',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
-                      fontSize: (ukuranLayar.height * 1 / 7) / 4,
+                      fontSize: (ukuranLayar.height * 1 / 7) / 6,
                     ),
                   ),
                 ],
               ),
               Text(
-                'Bayar Tagihan Anda sebelum Tanggal 25',
+                'Tagihan bulan November akan muncul pada 01-12-2021',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: Colors.white70,

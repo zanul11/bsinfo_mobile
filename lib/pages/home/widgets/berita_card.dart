@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 beritaCard(Size ukuranLayar) {
   return Container(
     width: ukuranLayar.width,
-    height: ukuranLayar.height * 1 / 7,
+    height: 120,
     margin: EdgeInsets.symmetric(vertical: 10),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -55,7 +55,6 @@ beritaCard(Size ukuranLayar) {
             children: [
               Container(
                 width: ukuranLayar.width / 3,
-                height: ukuranLayar.height * 1 / 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),

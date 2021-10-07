@@ -1,9 +1,12 @@
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/berita_card.dart';
+import 'package:bsainfo_mobile/pages/home/widgets/cardNewUser.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/menu.dart';
-import 'package:bsainfo_mobile/pages/home/widgets/tagihan.dart';
+import 'package:bsainfo_mobile/pages/home/widgets/tagihan_lunas.dart';
+import 'package:bsainfo_mobile/pages/home/widgets/tagihanbelumdaftar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,10 +25,11 @@ class _HomePageState extends State<HomePage> {
           physics: ClampingScrollPhysics(),
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: EdgeInsets.only(left: 20, right: 20, top: 15),
               child: Row(
                 children: [
                   Container(
+                    margin: EdgeInsets.only(top: 10),
                     height: 50,
                     width: 50,
                     decoration: BoxDecoration(
@@ -34,8 +38,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       color: Colors.blue,
                       image: DecorationImage(
-                        image: NetworkImage(
-                            'https://calonpengangguran.com/wp-content/uploads/2019/10/close-up-1-FILEminimizer.jpg'),
+                        image: AssetImage('assets/bsinfo.png'),
                       ),
                     ),
                   ),
@@ -44,41 +47,90 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                     child: Text(
-                      'Hallo Zanul..',
+                      'BS INFO',
                       style: GoogleFonts.poppins(
                           fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                   ),
                   CircleAvatar(
-                    child: Icon(
-                      Icons.notifications,
-                      color: Colors.white,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      onPressed: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        if (prefs.containsKey('nama')) {
+                          Navigator.of(context).pushNamed('/profile');
+                        } else {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              "/login", (route) => false);
+                        }
+                      },
                     ),
+                    // child: Icon(
+                    //   Icons.person,
+                    //   color: Colors.white,
+                    // ),
                     backgroundColor: colorTagihan,
                   ),
                 ],
               ),
             ),
-            tagihanWidget(ukuranLayar),
+            // SizedBox(
+            //   height: 10,
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 20),
+            //   child: Text(
+            //     'No Pelanggan Anda',
+            //     style: GoogleFonts.poppins(
+            //       fontWeight: FontWeight.w500,
+            //     ),
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 5,
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 20),
+            //   child: Row(
+            //     children: [
+            //       Text(
+            //         '2018082061',
+            //         style: GoogleFonts.poppins(
+            //           fontWeight: FontWeight.w700,
+            //         ),
+            //       ),
+            //       Icon(Icons.keyboard_arrow_down_sharp)
+            //     ],
+            //   ),
+            // ),
+            cardNewUser(ukuranLayar, context),
             menuWidget(ukuranLayar),
             Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Text(
+                'Berita',
+                style: GoogleFonts.poppins(
+                    fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              height: ukuranLayar.height * 3 / 7,
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      'Berita',
-                      style: GoogleFonts.poppins(
-                          fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
+                  beritaCard(ukuranLayar),
+                  beritaCard(ukuranLayar),
+                  beritaCard(ukuranLayar),
+                  beritaCard(ukuranLayar),
+                  beritaCard(ukuranLayar),
+                  SizedBox(
+                    height: 40,
                   ),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
                 ],
               ),
             )
