@@ -35,8 +35,7 @@ Padding tagihanBelumDaftar(Size ukuranLayar, BuildContext context) {
                         backgroundColor: Colors.white,
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/login", (route) => false);
+                        Navigator.of(context).pushNamed("/profile");
                       },
                       child: Row(
                         children: [

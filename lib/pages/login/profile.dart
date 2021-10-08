@@ -1,4 +1,6 @@
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +12,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  List<Result> listPelanggan = List.empty();
+  // int countPelanggan = 0;
   String nama = '', nohp = '';
   getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -17,12 +21,25 @@ class _ProfilePageState extends State<ProfilePage> {
       nama = prefs.getString('nama')!;
       nohp = prefs.getString('nohp')!;
     });
+    Api().getuserPelanggan().then((value) {
+      if (value.message == 'tidak ditemukan') {
+        setState(() {
+          // countPelanggan = 0;
+          listPelanggan = List.empty();
+        });
+      } else {
+        setState(() {
+          listPelanggan = value.result;
+        });
+      }
+    });
   }
 
   final TextEditingController noPel = TextEditingController();
   @override
   void initState() {
     getUser();
+
     super.initState();
   }
 
@@ -39,13 +56,17 @@ class _ProfilePageState extends State<ProfilePage> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ListTile(
-                leading: new Icon(Icons.photo),
-                title: new Text('Photo'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
+              ...List.generate(
+                listPelanggan.length,
+                (index) => ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text(listPelanggan[index].noPelanggan),
+                  subtitle: Text(listPelanggan[index].pelangganDetail.nama),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              )
             ],
           );
         });
@@ -202,7 +223,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => bottomSheet(),
+                        onTap: () => (listPelanggan.length == 0)
+                            ? bottomSheetAddNoPel()
+                            : bottomSheet(),
                         child: Container(
                           margin: EdgeInsets.all(7),
                           padding: EdgeInsets.all(20),
@@ -223,13 +246,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                       'Nomor pelanggan',
                                       style: TextStyle(color: Colors.grey[600]),
                                     ),
-                                    Text(
-                                      '202004370',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 17,
-                                      ),
-                                    ),
+                                    (listPelanggan.length == 0)
+                                        ? Text(
+                                            'Tambahkan nomor pelanggan',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 17,
+                                            ),
+                                          )
+                                        : Text(
+                                            '202004370',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 17,
+                                            ),
+                                          ),
                                   ],
                                 ),
                               ),

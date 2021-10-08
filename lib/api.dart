@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bsainfo_mobile/models/login_model.dart';
+import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
   Client client = Client();
@@ -40,6 +42,18 @@ class Api {
     print(_response.statusCode);
     if (_response.statusCode == 200) {
       return loginModelFromJson(_response.body);
+    } else {
+      throw Exception('Server Error');
+    }
+  }
+
+  Future<UserPelangganModel> getuserPelanggan() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String _url = '$apiUrl/getPelanggan/${prefs.getString('nohp')}';
+    final _response = await client.get(Uri.parse(_url));
+    print(_response.statusCode);
+    if (_response.statusCode == 200) {
+      return userPelangganModelFromJson(_response.body);
     } else {
       throw Exception('Server Error');
     }

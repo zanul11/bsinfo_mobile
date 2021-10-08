@@ -16,6 +16,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool cekLogin = false;
+  String namaSUer = '';
+
+  getCekLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('nama')) {
+      setState(() {
+        cekLogin = true;
+        namaSUer = prefs.getString('nama')!;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    getCekLogin();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var ukuranLayar = MediaQuery.of(context).size;
@@ -47,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                     child: Text(
-                      'BS INFO',
+                      (!cekLogin) ? 'BS INFO' : 'Halo $namaSUer',
                       style: GoogleFonts.poppins(
                           fontSize: 17, fontWeight: FontWeight.bold),
                     ),
@@ -107,7 +126,9 @@ class _HomePageState extends State<HomePage> {
             //     ],
             //   ),
             // ),
-            cardNewUser(ukuranLayar, context),
+            (!cekLogin)
+                ? cardNewUser(ukuranLayar, context)
+                : tagihanBelumDaftar(ukuranLayar, context),
             menuWidget(ukuranLayar),
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
