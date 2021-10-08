@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,16 +15,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final api = Api();
   List<Result> listPelanggan = List.empty();
   // int countPelanggan = 0;
-  String nama = '', nohp = '';
+  String nama = '', nohp = '', selectedNo = '';
   getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       nama = prefs.getString('nama')!;
       nohp = prefs.getString('nohp')!;
     });
-    Api().getuserPelanggan().then((value) {
+    api.getuserPelanggan().then((value) {
       if (value.message == 'tidak ditemukan') {
         setState(() {
           // countPelanggan = 0;
@@ -30,6 +34,12 @@ class _ProfilePageState extends State<ProfilePage> {
       } else {
         setState(() {
           listPelanggan = value.result;
+          if (!prefs.containsKey('selectedNoPel')) {
+            prefs.setString('selectedNoPel', listPelanggan[0].noPelanggan);
+            selectedNo = listPelanggan[0].noPelanggan;
+          } else {
+            selectedNo = prefs.getString('selectedNoPel')!;
+          }
         });
       }
     });
@@ -59,10 +69,60 @@ class _ProfilePageState extends State<ProfilePage> {
               ...List.generate(
                 listPelanggan.length,
                 (index) => ListTile(
-                  leading: Icon(Icons.person),
+                  leading: Icon(
+                    (selectedNo == listPelanggan[index].noPelanggan)
+                        ? Icons.check_box
+                        : Icons.person,
+                    color: (selectedNo == listPelanggan[index].noPelanggan)
+                        ? Colors.green
+                        : Colors.blue,
+                  ),
                   title: Text(listPelanggan[index].noPelanggan),
                   subtitle: Text(listPelanggan[index].pelangganDetail.nama),
-                  onTap: () {
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      api
+                          .hapusPelanggan(
+                              id: listPelanggan[index].id.toString())
+                          .then((value) async {
+                        if (value['status']) {
+                          if (listPelanggan[index].noPelanggan == selectedNo) {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.remove('selectedNoPel');
+                            getUser();
+                          } else {
+                            getUser();
+                          }
+                          Fluttertoast.showToast(
+                            msg: 'Berhasil Hapus!',
+                            backgroundColor: Colors.green,
+                            textColor: whiteColor,
+                          );
+                          Navigator.pop(context);
+                        }
+                      }).catchError((onError) {
+                        Fluttertoast.showToast(
+                          msg: 'Server Error!',
+                          backgroundColor: Colors.red,
+                          textColor: whiteColor,
+                        );
+                      });
+                    },
+                  ),
+                  onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    setState(() {
+                      selectedNo = listPelanggan[index].noPelanggan;
+
+                      prefs.setString(
+                          'selectedNoPel', listPelanggan[index].noPelanggan);
+                    });
                     Navigator.pop(context);
                   },
                 ),
@@ -71,6 +131,8 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         });
   }
+
+  bool _loading = false;
 
   bottomSheetAddNoPel() {
     return showModalBottomSheet(
@@ -131,10 +193,88 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextButton.styleFrom(
                       backgroundColor: colorTagihan,
                     ),
-                    onPressed: () {},
-                    child: Text(
-                      'Tambahkan',
-                      style: TextStyle(color: Colors.white),
+                    onPressed: () async {
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        if (result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          setState(() {
+                            _loading = true;
+                          });
+                          api
+                              .addPelanggan(nopel: noPel.text)
+                              .then((value) async {
+                            if (value['status']) {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              if (!prefs.containsKey('selectedNoPel')) {
+                                setState(() {
+                                  prefs.setString('selectedNoPel', noPel.text);
+                                });
+                              }
+                              getUser();
+                              Fluttertoast.showToast(
+                                msg: "Berhasil tambah no pelanggan",
+                                backgroundColor: Colors.green,
+                                textColor: whiteColor,
+                              );
+                              setState(() {
+                                _loading = false;
+                              });
+                              Navigator.pop(context);
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "${value['message']}",
+                                backgroundColor: Colors.red,
+                                textColor: whiteColor,
+                              );
+                              setState(() {
+                                _loading = false;
+                              });
+                            }
+                          }).catchError((onError) {
+                            Fluttertoast.showToast(
+                              msg: 'Server Error!',
+                              backgroundColor: Colors.red,
+                              textColor: whiteColor,
+                            );
+                            setState(() {
+                              _loading = false;
+                            });
+                          });
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: 'Tidak ada koneksi internet!',
+                            backgroundColor: Colors.red,
+                            textColor: whiteColor,
+                          );
+                          setState(() {
+                            _loading = false;
+                          });
+                        }
+                      } on SocketException catch (_) {
+                        Fluttertoast.showToast(
+                          msg: 'Tidak ada koneksi internet!',
+                          backgroundColor: Colors.red,
+                          textColor: whiteColor,
+                        );
+                        setState(() {
+                          _loading = false;
+                        });
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        (_loading)
+                            ? CircularProgressIndicator()
+                            : Text(
+                                'Tambahkan',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                      ],
                     ),
                   )
                 ],
@@ -255,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                           )
                                         : Text(
-                                            '202004370',
+                                            '$selectedNo',
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 17,

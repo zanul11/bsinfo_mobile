@@ -1,7 +1,10 @@
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/berita_card.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/cardNewUser.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/menu.dart';
+import 'package:bsainfo_mobile/pages/home/widgets/tagihan.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/tagihan_lunas.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/tagihanbelumdaftar.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool cekLogin = false;
-  String namaSUer = '';
+  String namaSUer = '', nohp = '';
 
   getCekLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -25,14 +28,70 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         cekLogin = true;
         namaSUer = prefs.getString('nama')!;
+        nohp = prefs.getString('nohp')!;
       });
     }
+    getUser();
   }
 
   @override
   void initState() {
     getCekLogin();
     super.initState();
+  }
+
+  final api = Api();
+  List<Result> listPelanggan = List.empty();
+  String selectedNo = '';
+  getUser() async {
+    api.getuserPelanggan().then((value) {
+      if (value.message == 'tidak ditemukan') {
+        setState(() {
+          listPelanggan = List.empty();
+        });
+      } else {
+        setState(() {
+          listPelanggan = value.result;
+        });
+      }
+    });
+  }
+
+  bottomSheet() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ...List.generate(
+                listPelanggan.length,
+                (index) => ListTile(
+                  leading: Icon(
+                    (selectedNo == listPelanggan[index].noPelanggan)
+                        ? Icons.check_box
+                        : Icons.person,
+                    color: (selectedNo == listPelanggan[index].noPelanggan)
+                        ? Colors.green
+                        : Colors.blue,
+                  ),
+                  title: Text(listPelanggan[index].noPelanggan),
+                  subtitle: Text(listPelanggan[index].pelangganDetail.nama),
+                  onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    setState(() {
+                      selectedNo = listPelanggan[index].noPelanggan;
+                      prefs.setString(
+                          'selectedNoPel', listPelanggan[index].noPelanggan);
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ],
+          );
+        });
   }
 
   @override
@@ -97,38 +156,48 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            // SizedBox(
-            //   height: 10,
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   child: Text(
-            //     'No Pelanggan Anda',
-            //     style: GoogleFonts.poppins(
-            //       fontWeight: FontWeight.w500,
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 5,
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   child: Row(
-            //     children: [
-            //       Text(
-            //         '2018082061',
-            //         style: GoogleFonts.poppins(
-            //           fontWeight: FontWeight.w700,
-            //         ),
-            //       ),
-            //       Icon(Icons.keyboard_arrow_down_sharp)
-            //     ],
-            //   ),
-            // ),
+            (selectedNo == '')
+                ? Container()
+                : SizedBox(
+                    height: 10,
+                  ),
+            (selectedNo == '')
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'No Pelanggan Anda',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+            (selectedNo == '')
+                ? Container()
+                : SizedBox(
+                    height: 5,
+                  ),
+            (selectedNo == '')
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          '$selectedNo',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Icon(Icons.keyboard_arrow_down_sharp)
+                      ],
+                    ),
+                  ),
             (!cekLogin)
                 ? cardNewUser(ukuranLayar, context)
-                : tagihanBelumDaftar(ukuranLayar, context),
+                : (listPelanggan.length == 0)
+                    ? tagihanBelumDaftar(ukuranLayar, context)
+                    : tagihanWidget(ukuranLayar),
             menuWidget(ukuranLayar),
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
