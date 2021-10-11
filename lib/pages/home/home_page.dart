@@ -9,6 +9,7 @@ import 'package:bsainfo_mobile/pages/home/widgets/tagihan_lunas.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/tagihanbelumdaftar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool cekLogin = false;
   String namaSUer = '', nohp = '';
+  bool loadWidget = false;
 
   getCekLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,6 +31,8 @@ class _HomePageState extends State<HomePage> {
         cekLogin = true;
         namaSUer = prefs.getString('nama')!;
         nohp = prefs.getString('nohp')!;
+        if (prefs.containsKey('selectedNoPel'))
+          selectedNo = prefs.getString('selectedNoPel')!;
       });
     }
     getUser();
@@ -40,6 +44,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   final api = Api();
   List<Result> listPelanggan = List.empty();
   String selectedNo = '';
@@ -48,10 +58,12 @@ class _HomePageState extends State<HomePage> {
       if (value.message == 'tidak ditemukan') {
         setState(() {
           listPelanggan = List.empty();
+          loadWidget = true;
         });
       } else {
         setState(() {
           listPelanggan = value.result;
+          loadWidget = true;
         });
       }
     });
@@ -94,137 +106,171 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    setState(() {
+      loadWidget = false;
+      cekLogin = false;
+      namaSUer = '';
+      nohp = '';
+    });
+    await Future.delayed(Duration(milliseconds: 1000));
+    getCekLogin();
+    _refreshController.refreshCompleted();
+  }
+
   @override
   Widget build(BuildContext context) {
     var ukuranLayar = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          physics: ClampingScrollPhysics(),
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 15),
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(100),
-                      ),
-                      color: Colors.blue,
-                      image: DecorationImage(
-                        image: AssetImage('assets/bsinfo.png'),
+        child: SmartRefresher(
+          enablePullUp: false,
+          enablePullDown: true,
+          onRefresh: _onRefresh,
+          controller: _refreshController,
+          child: ListView(
+            physics: ClampingScrollPhysics(),
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20, top: 15),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(100),
+                        ),
+                        color: Colors.blue,
+                        image: DecorationImage(
+                          image: AssetImage('assets/bsinfo.png'),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: Text(
-                      (!cekLogin) ? 'BS INFO' : 'Halo $namaSUer',
-                      style: GoogleFonts.poppins(
-                          fontSize: 17, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 15,
                     ),
-                  ),
-                  CircleAvatar(
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.white,
+                    Expanded(
+                      child: Text(
+                        (!cekLogin) ? 'BS INFO' : 'Halo $namaSUer',
+                        style: GoogleFonts.poppins(
+                            fontSize: 17, fontWeight: FontWeight.bold),
                       ),
-                      onPressed: () async {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        if (prefs.containsKey('nama')) {
-                          Navigator.of(context).pushNamed('/profile');
-                        } else {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/login", (route) => false);
-                        }
-                      },
                     ),
-                    // child: Icon(
-                    //   Icons.person,
-                    //   color: Colors.white,
-                    // ),
-                    backgroundColor: colorTagihan,
-                  ),
-                ],
+                    CircleAvatar(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          if (prefs.containsKey('nama')) {
+                            Navigator.of(context).pushNamed('/profile');
+                          } else {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                "/login", (route) => false);
+                          }
+                        },
+                      ),
+                      // child: Icon(
+                      //   Icons.person,
+                      //   color: Colors.white,
+                      // ),
+                      backgroundColor: colorTagihan,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            (selectedNo == '')
-                ? Container()
-                : SizedBox(
-                    height: 10,
-                  ),
-            (selectedNo == '')
-                ? Container()
-                : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      'No Pelanggan Anda',
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-            (selectedNo == '')
-                ? Container()
-                : SizedBox(
-                    height: 5,
-                  ),
-            (selectedNo == '')
-                ? Container()
-                : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Text(
-                          '$selectedNo',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w700,
+              (!loadWidget)
+                  ? Container()
+                  : (selectedNo == '')
+                      ? Container()
+                      : SizedBox(
+                          height: 20,
+                        ),
+              (!loadWidget)
+                  ? Container()
+                  : (selectedNo == '')
+                      ? Container()
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'No Pelanggan Anda',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        Icon(Icons.keyboard_arrow_down_sharp)
-                      ],
+              (!loadWidget)
+                  ? Container()
+                  : (selectedNo == '')
+                      ? Container()
+                      : SizedBox(
+                          height: 5,
+                        ),
+              (!loadWidget)
+                  ? Container()
+                  : (selectedNo == '')
+                      ? Container()
+                      : GestureDetector(
+                          onTap: () => bottomSheet(),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '$selectedNo',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Icon(Icons.keyboard_arrow_down_sharp)
+                              ],
+                            ),
+                          ),
+                        ),
+              (!loadWidget)
+                  ? tagihanShimmerWidget(ukuranLayar)
+                  : ((!cekLogin)
+                      ? cardNewUser(ukuranLayar, context)
+                      : (listPelanggan.length == 0)
+                          ? tagihanBelumDaftar(ukuranLayar, context)
+                          : tagihanWidget(ukuranLayar)),
+              menuWidget(ukuranLayar, context),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Text(
+                  'Berita',
+                  style: GoogleFonts.poppins(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                height: ukuranLayar.height * 3 / 7,
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    beritaCard(ukuranLayar),
+                    beritaCard(ukuranLayar),
+                    beritaCard(ukuranLayar),
+                    beritaCard(ukuranLayar),
+                    beritaCard(ukuranLayar),
+                    SizedBox(
+                      height: 40,
                     ),
-                  ),
-            (!cekLogin)
-                ? cardNewUser(ukuranLayar, context)
-                : (listPelanggan.length == 0)
-                    ? tagihanBelumDaftar(ukuranLayar, context)
-                    : tagihanWidget(ukuranLayar),
-            menuWidget(ukuranLayar),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Text(
-                'Berita',
-                style: GoogleFonts.poppins(
-                    fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              height: ukuranLayar.height * 3 / 7,
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-              child: ListView(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  beritaCard(ukuranLayar),
-                  SizedBox(
-                    height: 40,
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

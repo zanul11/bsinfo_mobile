@@ -2,7 +2,10 @@ import 'package:bsainfo_mobile/pages/home/home_page.dart';
 import 'package:bsainfo_mobile/pages/login/login_page.dart';
 import 'package:bsainfo_mobile/pages/login/profile.dart';
 import 'package:bsainfo_mobile/pages/login/register_page.dart';
+import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_form.dart';
+import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_page.dart';
 import 'package:bsainfo_mobile/pages/splash_page.dart';
+import 'package:bsainfo_mobile/pages/tagihan/tagihan_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +67,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/profile': (context) => ProfilePage(),
+        '/tagihan': (context) => TagihanPage(),
+        '/pengaduan': (context) => PengaduanPage(),
+        '/pengaduan-form': (context) => PengaduanForm(),
       },
     );
   }
