@@ -169,6 +169,7 @@ class _LoginState extends State<Login> {
                     if (value.status) {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
+                      prefs.clear();
                       await prefs.setString('nama', value.result.nama);
                       await prefs.setString('nohp', value.result.noHp);
                       Fluttertoast.showToast(

@@ -43,7 +43,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     children: [
                       Image.asset(
                         'assets/tagihan.png',
-                        height: (ukuranLayar.height * 1 / 4.5) / 6,
+                        height: (ukuranLayar.height * 1 / 3) / 6,
                       ),
                       Text(
                         'Tagihan',
@@ -83,7 +83,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     children: [
                       Image.asset(
                         'assets/pengaduan.png',
-                        height: (ukuranLayar.height * 1 / 4.5) / 6,
+                        height: (ukuranLayar.height * 1 / 3) / 6,
                       ),
                       Text(
                         'Pengaduan',
@@ -121,7 +121,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                   children: [
                     Image.asset(
                       'assets/profile.png',
-                      height: (ukuranLayar.height * 1 / 4.5) / 6,
+                      height: (ukuranLayar.height * 1 / 3) / 6,
                     ),
                     Text(
                       'Profil',
@@ -163,7 +163,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     children: [
                       Image.asset(
                         'assets/bacameter.png',
-                        height: (ukuranLayar.height * 1 / 4.5) / 6,
+                        height: (ukuranLayar.height * 1 / 3) / 6,
                       ),
                       Text(
                         'Baca Mandiri',
@@ -202,7 +202,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                   children: [
                     Image.asset(
                       'assets/pembayaran.png',
-                      height: (ukuranLayar.height * 1 / 4.5) / 6,
+                      height: (ukuranLayar.height * 1 / 3) / 6,
                     ),
                     Text(
                       'Pembayaran Online',

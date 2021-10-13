@@ -102,6 +102,7 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
       if (value.message == 'tidak ditemukan') {
         setState(() {
           // countPelanggan = 0;
+
           listPelanggan = List.empty();
         });
       } else {

@@ -43,6 +43,7 @@ class _BacaMandiriPageState extends State<BacaMandiriPage> {
       if (value.message == 'tidak ditemukan') {
         setState(() {
           // countPelanggan = 0;
+          loadWidget = true;
           listPelanggan = List.empty();
         });
       } else {
