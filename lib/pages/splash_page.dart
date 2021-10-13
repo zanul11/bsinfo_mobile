@@ -80,7 +80,7 @@ class _SplashPageState extends State<SplashPage> {
           children: <Widget>[
             Image.asset(
               "assets/bsinfo.png",
-              cacheWidth: (size.height * 0.25).toInt(),
+              width: (size.height * 0.25),
             ),
           ],
         ),

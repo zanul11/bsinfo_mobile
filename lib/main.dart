@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:bsainfo_mobile/pages/bacamandiri/bacamandiri_form.dart';
+import 'package:bsainfo_mobile/pages/bacamandiri/bacamandiri_page.dart';
 import 'package:bsainfo_mobile/pages/home/home_page.dart';
 import 'package:bsainfo_mobile/pages/login/login_page.dart';
 import 'package:bsainfo_mobile/pages/login/profile.dart';
@@ -28,7 +32,17 @@ Future<void> _firebaseMessagingBAckgroundHandler(RemoteMessage message) async {
   print('A bg message just showd up : ${message.messageId}');
 }
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBAckgroundHandler);
@@ -70,6 +84,8 @@ class MyApp extends StatelessWidget {
         '/tagihan': (context) => TagihanPage(),
         '/pengaduan': (context) => PengaduanPage(),
         '/pengaduan-form': (context) => PengaduanForm(),
+        '/bacamandiri': (context) => BacaMandiriPage(),
+        '/bacamandiri-form': (context) => BacaMandiriForm(),
       },
     );
   }

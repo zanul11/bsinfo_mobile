@@ -173,7 +173,7 @@ class _LoginState extends State<Login> {
                       await prefs.setString('nohp', value.result.noHp);
                       Fluttertoast.showToast(
                         msg: 'Berhasil Login!',
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.green,
                         toastLength: Toast.LENGTH_LONG,
                         textColor: whiteColor,
                       );

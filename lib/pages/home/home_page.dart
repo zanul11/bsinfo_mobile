@@ -1,5 +1,6 @@
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/koneksi.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/berita_card.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/cardNewUser.dart';
@@ -34,13 +35,21 @@ class _HomePageState extends State<HomePage> {
         if (prefs.containsKey('selectedNoPel'))
           selectedNo = prefs.getString('selectedNoPel')!;
       });
+      getUser();
+    } else {
+      setState(() {
+        loadWidget = true;
+      });
     }
-    getUser();
   }
 
   @override
   void initState() {
-    getCekLogin();
+    KoneksiInternet().koneksi().then((value) {
+      if (value) {
+        getCekLogin();
+      }
+    });
     super.initState();
   }
 

@@ -1,26 +1,95 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
-import 'package:bsainfo_mobile/models/jenis_pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
-import 'package:dropdown_search/dropdown_search.dart';
+import 'package:bsainfo_mobile/photoHero.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart' as dios;
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
-class PengaduanForm extends StatefulWidget {
+class BacaMandiriForm extends StatefulWidget {
   @override
-  _PengaduanFormState createState() => _PengaduanFormState();
+  _BacaMandiriFormState createState() => _BacaMandiriFormState();
 }
 
-class _PengaduanFormState extends State<PengaduanForm> {
+class _BacaMandiriFormState extends State<BacaMandiriForm> {
   final api = Api();
   List<Result> listPelanggan = List.empty();
   String selectedNo = '';
   String namaUser = '', nohpUser = '';
+  File _image = File('');
+  String _nmImage = '';
+
+  Future getImage(int type) async {
+    var image;
+    if (type == 0)
+      image = await ImagePicker().pickImage(source: ImageSource.camera);
+    else
+      image = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      final tempDir = await getExternalStorageDirectory();
+      final path = tempDir!.path;
+      var random = Random();
+      int randomNumber = random.nextInt(9999);
+      print('dir = $path');
+      var result = await FlutterImageCompress.compressAndGetFile(
+        image.path,
+        "$path/BACAMANDIRI_$nohpUser$randomNumber.jpg",
+        quality: 50,
+        format: CompressFormat.jpeg,
+      );
+      _nmImage = "BACAMANDIRI_$nohpUser$randomNumber";
+      setState(() {
+        _image = result!;
+      });
+      final pict = File(image.path);
+      pict.delete();
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  _settingModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      getImage(0);
+
+                      Navigator.pop(context);
+                    }),
+                new ListTile(
+                  leading: new Icon(Icons.image),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    getImage(1);
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -49,68 +118,20 @@ class _PengaduanFormState extends State<PengaduanForm> {
     });
   }
 
-  final TextEditingController nama = TextEditingController();
-  final TextEditingController noIdentitas = TextEditingController();
-  final TextEditingController alamat = TextEditingController();
-  final TextEditingController noTlp = TextEditingController();
+  final TextEditingController noIdPel = TextEditingController();
+  final TextEditingController standMeter = TextEditingController();
   final TextEditingController ket = TextEditingController();
-
-  List<ResultJenisPengaduan> dataJenisPengaduan = [];
-
-  getDataSpesialis() {
-    Api().getJenisPengaduan().then((value) {
-      dataJenisPengaduan = value.resultJenisPengaduan;
-    });
-  }
-
-  Widget _customDropDown(BuildContext context, ResultJenisPengaduan? item,
-      String itemDesignation) {
-    if (item == null) {
-      return Container();
-    }
-    return Container(
-        child: ListTile(
-      contentPadding: EdgeInsets.all(0),
-      title: Text(item.nama),
-    ));
-  }
-
-  Future<List<ResultJenisPengaduan>> getDataSpesialisCari(filter) async {
-    return dataJenisPengaduan
-        .where((element) => (element.nama.contains(filter)))
-        .toList();
-  }
-
-  Widget _customPopupItemBuilder(
-      BuildContext context, ResultJenisPengaduan item, bool isSelected) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-      child: ListTile(
-        title: Text(item.nama),
-      ),
-    );
-  }
 
   @override
   void initState() {
     getUser();
-    getDataSpesialis();
     super.initState();
   }
 
   @override
   void dispose() {
-    nama.dispose();
-    noIdentitas.dispose();
-    alamat.dispose();
-    noTlp.dispose();
+    noIdPel.dispose();
+    standMeter.dispose();
     ket.dispose();
     super.dispose();
   }
@@ -154,8 +175,6 @@ class _PengaduanFormState extends State<PengaduanForm> {
   }
 
   int menu = 0;
-  ResultJenisPengaduan _selectedJenisPengaduan =
-      ResultJenisPengaduan(id: 0, nama: 'Pilih Jenis Pengaduan');
 
   showAlertDialog(BuildContext context, String isi) {
     // set up the button
@@ -212,22 +231,10 @@ class _PengaduanFormState extends State<PengaduanForm> {
     if (_currentStep < 1) {
       FocusScope.of(context).requestFocus(new FocusNode());
       if (_currentStep == 0) {
-        if (menu == 0) {
-          if (noIdentitas.text == '' || alamat.text == '') {
-            showAlertDialog(context, 'Field Tidak boleh kosong');
-          } else
-            setState(() => _currentStep += 1);
-        } else {
-          if (noIdentitas.text == '' ||
-              alamat.text == '' ||
-              nama.text == '' ||
-              noTlp.text == '') {
-            showAlertDialog(context, 'Field Tidak boleh kosong');
-          } else
-            setState(() => _currentStep += 1);
-        }
-
-        // setState(() => _currentStep += 1);
+        if (_image.path == '') {
+          showAlertDialog(context, 'Foto Tidak boleh kosong');
+        } else
+          setState(() => _currentStep += 1);
       } else {
         setState(() => _currentStep += 1);
       }
@@ -241,6 +248,112 @@ class _PengaduanFormState extends State<PengaduanForm> {
     _currentStep > 0 ? setState(() => _currentStep -= 1) : null;
   }
 
+  doSimpan() async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    pd.show(
+        max: 2,
+        msg: 'Mengirim Data Baca Mandiri..',
+        progressType: ProgressType.valuable,
+        backgroundColor: Color(0xff212121),
+        progressValueColor: Color(0xff3550B4),
+        progressBgColor: Colors.white70,
+        msgColor: Colors.white,
+        valueColor: Colors.white);
+
+    /// Added to test late loading starts
+    await Future.delayed(Duration(milliseconds: 1000));
+    dios.FormData data = dios.FormData.fromMap({
+      "file": await dios.MultipartFile.fromFile(
+        _image.path,
+      ),
+      "nama": _nmImage,
+      "cIdPembaca": 'bacamandiri',
+    });
+    api
+        .bacaMandiri(
+            noPelanggan: (menu == 0) ? selectedNo : noIdPel.text,
+            stan: standMeter.text,
+            foto: '$_nmImage.jpg',
+            keterangan: ket.text)
+        .then((value) {
+      if (value['status']) {
+        pd.update(value: 1, msg: 'Kirim Data...');
+        dios.Dio dio = dios.Dio();
+        dio
+            .post("https://api.garagebit.xyz/api/uploadImage", data: data)
+            .then((response) async {
+          var res = json.decode(response.toString());
+          if (response.statusCode == 200) {
+            if (res['success']) {
+              pd.update(value: 2, msg: 'Selesai...');
+              pd.close();
+              Fluttertoast.showToast(
+                  msg: "Berhasil Baca Mandiri!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.green,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil("/home", (route) => false);
+            } else {
+              pd.close();
+              Fluttertoast.showToast(
+                  msg: "Gagal Kirim Gambar,Server Error!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          } else {
+            pd.close();
+            Fluttertoast.showToast(
+                msg: "Gagal Kirim Gambar,Server Error!",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        }).catchError((onError) {
+          pd.close();
+          Fluttertoast.showToast(
+              msg: "Gagal Kirim Gambar,Server Error!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        });
+      } else {
+        pd.close();
+        Fluttertoast.showToast(
+            msg: "${value['message']}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    }).catchError((onError) {
+      pd.close();
+      Fluttertoast.showToast(
+          msg: "Gagal Kirim Data,Server Error!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -248,7 +361,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
       appBar: AppBar(
         backgroundColor: colorTagihan,
         title: Text(
-          'Form Pengaduan',
+          'Form Baca Mandiri',
         ),
       ),
       floatingActionButton: (_currentStep == 1)
@@ -257,38 +370,19 @@ class _PengaduanFormState extends State<PengaduanForm> {
                 try {
                   final result = await InternetAddress.lookup('google.com');
                   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-                    Api()
-                        .savePengaduan(
-                            pelangganId: (menu == 0) ? selectedNo : '',
-                            nama: (menu == 0) ? namaUser : nama.text,
-                            alamat: alamat.text,
-                            noIdentitas: noIdentitas.text,
-                            noTlp: (menu == 0) ? nohpUser : noTlp.text,
-                            jenisAduan: _selectedJenisPengaduan.id.toString(),
-                            keterangan: ket.text)
-                        .then((value) {
-                      if (value['status']) {
-                        Fluttertoast.showToast(
-                            msg: "Berhasil Mengirim Pengaduan!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil("/home", (route) => false);
+                    if (menu == 0) {
+                      if (standMeter.text == '') {
+                        showAlertDialog(context, 'Field Tidak boleh kosong');
+                      } else {
+                        doSimpan();
                       }
-                    }).catchError((onError) {
-                      Fluttertoast.showToast(
-                          msg: "Server Error!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    });
+                    } else {
+                      if (noIdPel.text == '' || standMeter.text == '') {
+                        showAlertDialog(context, 'Field Tidak boleh kosong');
+                      } else {
+                        doSimpan();
+                      }
+                    }
                   } else {
                     Fluttertoast.showToast(
                         msg: "Tidak ada jaringan internet!",
@@ -312,7 +406,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                   print('not connected');
                 }
               },
-              label: Text('KIRIM PENGADUAN'),
+              label: Text('KIRIM DATA'),
               icon: Icon(Icons.send),
               backgroundColor: Colors.blue,
             )
@@ -351,12 +445,13 @@ class _PengaduanFormState extends State<PengaduanForm> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'PELANGGAN',
+                                  'NO TERDAFTAR',
                                   style: GoogleFonts.nunito(
-                                      fontSize: 15,
+                                      fontSize: 12,
                                       color: (menu == 0)
                                           ? Colors.white
                                           : Colors.grey),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
@@ -383,12 +478,13 @@ class _PengaduanFormState extends State<PengaduanForm> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'NON PELANGGAN',
+                                  'INPUT MANUAL',
                                   style: GoogleFonts.nunito(
-                                      fontSize: 15,
+                                      fontSize: 12,
                                       color: (menu == 1)
                                           ? Colors.white
                                           : Colors.grey),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
@@ -475,7 +571,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
               Padding(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  'Form Pengaduan',
+                  'Form Baca Mandiri',
                   style: GoogleFonts.nunito(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -498,166 +594,208 @@ class _PengaduanFormState extends State<PengaduanForm> {
                         state: _currentStep >= 0
                             ? StepState.complete
                             : StepState.disabled,
-                        title: Text('Informasi Pengadu'),
+                        title: Text('Foto Meteran'),
                         content: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            (menu == 0)
+                            (_image.path == '')
                                 ? Container()
-                                : TextFormField(
-                                    style: GoogleFonts.openSans(
-                                      fontSize: 14.0,
-                                    ),
-                                    controller: nama,
-                                    decoration: InputDecoration(
-                                      labelText: 'Nama',
-                                      labelStyle: GoogleFonts.openSans(
-                                        fontSize: 10.0,
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        borderSide: BorderSide(
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                      hintText: 'Nama',
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        borderSide: BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                : Image.file(_image),
                             SizedBox(
-                              height: 10.0,
+                              height: 10,
                             ),
-                            TextFormField(
-                              style: GoogleFonts.openSans(
-                                fontSize: 14.0,
-                              ),
-                              controller: noIdentitas,
-                              decoration: InputDecoration(
-                                labelText: 'No Identitas',
-                                labelStyle: GoogleFonts.openSans(
-                                  fontSize: 10.0,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                                hintText: 'No Identitas',
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            (menu == 0)
-                                ? Container()
-                                : TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    style: GoogleFonts.openSans(
-                                      fontSize: 14.0,
-                                    ),
-                                    controller: noTlp,
-                                    decoration: InputDecoration(
-                                      labelText: 'No Telp/Hp',
-                                      labelStyle: GoogleFonts.openSans(
-                                        fontSize: 10.0,
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        borderSide: BorderSide(
-                                          color: Colors.blue,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                (_image.path == '')
+                                    ? Center()
+                                    : TextButton.icon(
+                                        style: TextButton.styleFrom(
+                                            side: BorderSide(
+                                                color: Colors.red, width: 1)),
+                                        onPressed: () {
+                                          print(_nmImage);
+                                          _image = File('');
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          size: 18.0,
+                                          color: Colors.red,
+                                        ),
+                                        label: const Text(
+                                          'Hapus Foto',
+                                          style: TextStyle(color: Colors.red),
                                         ),
                                       ),
-                                      hintText: 'No Telp/Hp',
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        borderSide: BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            TextFormField(
-                              style: GoogleFonts.openSans(
-                                fontSize: 14.0,
-                              ),
-                              maxLines: 2,
-                              controller: alamat,
-                              decoration: InputDecoration(
-                                labelText: 'Alamat',
-                                labelStyle: GoogleFonts.openSans(
-                                  fontSize: 10.0,
+                                SizedBox(
+                                  width: 10,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blue,
+                                TextButton.icon(
+                                  onPressed: () {
+                                    _settingModalBottomSheet(context);
+                                  },
+                                  style: TextButton.styleFrom(
+                                      side: BorderSide(
+                                          color: Colors.blue, width: 1)),
+                                  icon: Icon(
+                                    Icons.camera_alt,
+                                    size: 20.0,
                                   ),
+                                  label: Text((_image.path == '')
+                                      ? 'Ambil Foto Disini'
+                                      : 'Ambil Ulang'),
                                 ),
-                                hintText: 'Alamat',
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1.0,
-                                  ),
-                                ),
-                              ),
-                            ),
+                              ],
+                            )
                           ],
                         ),
                       ),
                       Step(
-                        isActive: _currentStep >= 1,
-                        state: _currentStep >= 1
+                        isActive: _currentStep >= 0,
+                        state: _currentStep >= 0
                             ? StepState.complete
                             : StepState.disabled,
-                        title: Text('Informasi Gangguan'),
+                        title: Text('Informasi Pelanggan'),
                         content: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            (menu == 0)
+                                ? Container()
+                                : SizedBox(
+                                    height: 10,
+                                  ),
+                            (menu == 0)
+                                ? Container()
+                                : TextFormField(
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14.0,
+                                    ),
+                                    controller: noIdPel,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText: 'No Pelanggan',
+                                      labelStyle: GoogleFonts.openSans(
+                                        fontSize: 10.0,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      hintText: 'No Pelanggan',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                             SizedBox(
                               height: 10.0,
                             ),
-                            DropdownSearch<ResultJenisPengaduan>(
-                              mode: Mode.DIALOG,
-                              showSearchBox: false,
-                              // isFilteredOnline: true,
-                              // showClearButton: true,
-                              onFind: (String filter) =>
-                                  getDataSpesialisCari(filter),
-                              dropdownBuilder: _customDropDown,
-                              popupItemBuilder: _customPopupItemBuilder,
-                              label: "Jenis Pengaduan",
-                              hint: "Pilih Spesialisasi",
-                              // popupItemDisabled: (String s) => s.startsWith('I'),
-                              onChanged: (value) {
-                                _selectedJenisPengaduan = value!;
-                              },
-                              selectedItem: _selectedJenisPengaduan,
+                            TextFormField(
+                              style: GoogleFonts.openSans(
+                                fontSize: 14.0,
+                              ),
+                              controller: standMeter,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Angka Meter',
+                                labelStyle: GoogleFonts.openSans(
+                                  fontSize: 10.0,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.info),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            "Perhatian!",
+                                            style: GoogleFonts.openSans(),
+                                          ),
+                                          content: Column(
+                                            children: [
+                                              Text(
+                                                "Masukkan hanya angka yang berwarna hitam!",
+                                                style: GoogleFonts.openSans(),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (ctx) {
+                                                    return PhotoHero(
+                                                      photo:
+                                                          'assets/angkameter.jpg',
+                                                    );
+                                                  }));
+                                                },
+                                                child: Image.asset(
+                                                    'assets/angkameter.jpg'),
+                                              ),
+                                              Text(
+                                                '*Tekan gambar untuk melihat lebih jelas!',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                "Jika seperti contoh gambar di atas, maka nilai yang di-inputkan pada form angka meter adalah nilai 30.",
+                                                style: GoogleFonts.openSans(),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                "OK",
+                                                style: GoogleFonts.openSans(),
+                                              ),
+                                              onPressed: () {
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        new FocusNode());
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                hintText: 'Angka Meter',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.blueAccent,
+                                    width: 1.0,
+                                  ),
+                                ),
+                              ),
                             ),
                             SizedBox(
                               height: 10.0,
@@ -669,7 +807,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                               maxLines: 3,
                               controller: ket,
                               decoration: InputDecoration(
-                                labelText: 'Rincian Aduan',
+                                labelText: 'Keterangan',
                                 labelStyle: GoogleFonts.openSans(
                                   fontSize: 10.0,
                                 ),
@@ -679,7 +817,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                                     color: Colors.blue,
                                   ),
                                 ),
-                                hintText: 'Rincian Aduan',
+                                hintText: 'Keterangan (opsional)',
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                   borderSide: BorderSide(
@@ -689,104 +827,22 @@ class _PengaduanFormState extends State<PengaduanForm> {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              '*Keterangan bersifat opsional, dapat dikosongkan',
+                              style: TextStyle(fontSize: 10),
+                            )
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-                // child: ListView(
-                //   children: [
-                //     Padding(
-                //         padding:
-                //             EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
-                //         child: Row(
-                //           mainAxisSize: MainAxisSize.max,
-                //           children: <Widget>[
-                //             Flexible(
-                //               child: DropdownSearch<ResultJenisPengaduan>(
-                //                 mode: Mode.DIALOG,
-                //                 showSearchBox: false,
-                //                 // isFilteredOnline: true,
-                //                 // showClearButton: true,
-                //                 onFind: (String filter) =>
-                //                     getDataSpesialisCari(filter),
-                //                 dropdownBuilder: _customDropDown,
-                //                 popupItemBuilder: _customPopupItemBuilder,
-                //                 label: "Jenis Pengaduan",
-                //                 hint: "Pilih Spesialisasi",
-                //                 // popupItemDisabled: (String s) => s.startsWith('I'),
-                //                 onChanged: (value) {
-                //                   _selectedJenisPengaduan = value!;
-                //                 },
-                //                 selectedItem: _selectedJenisPengaduan,
-                //               ),
-                //             ),
-                //           ],
-                //         )),
-                //     SizedBox(
-                //       height: 15.0,
-                //     ),
-                //     TextFormField(
-                //       maxLines: 3,
-                //       // controller: ketController,
-                //       textInputAction: TextInputAction.done,
-                //       style: GoogleFonts.openSans(
-                //         fontSize: 14.0,
-                //       ),
-                //       // maxLength: 150,
-                //       decoration: InputDecoration(
-                //         labelStyle: GoogleFonts.openSans(
-                //           fontSize: 10.0,
-                //         ),
-                //         focusedBorder: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(15.0),
-                //           borderSide: BorderSide(
-                //             color: Colors.blue,
-                //           ),
-                //         ),
-                //         hintText: 'Keterangan',
-                //         enabledBorder: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(15.0),
-                //           borderSide: BorderSide(
-                //             color: Colors.blueAccent,
-                //             width: 1.0,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
               )
             ],
           ),
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //     height: 75,
-          //     width: double.infinity,
-          //     decoration: BoxDecoration(
-          //       color: Colors.white,
-          //       border: Border(
-          //         top: BorderSide(
-          //           color: Colors.grey.shade200,
-          //           width: 1.0,
-          //         ),
-          //       ),
-          //     ),
-          //     child: TextButton(
-          //       style: TextButton.styleFrom(
-          //         backgroundColor: colorTagihan,
-          //       ),
-          //       onPressed: null,
-          //       child: Text(
-          //         'Kirim Pengaduan',
-          //         style: TextStyle(color: Colors.white),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
