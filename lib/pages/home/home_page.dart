@@ -63,6 +63,7 @@ class _HomePageState extends State<HomePage> {
   List<Result> listPelanggan = List.empty();
   String selectedNo = '';
   getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     api.getuserPelanggan().then((value) {
       if (value.message == 'tidak ditemukan') {
         setState(() {
@@ -72,6 +73,8 @@ class _HomePageState extends State<HomePage> {
       } else {
         setState(() {
           listPelanggan = value.result;
+          if (!prefs.containsKey('selectedNoPel'))
+            selectedNo = listPelanggan[0].noPelanggan;
           loadWidget = true;
         });
       }
