@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePerusahaanPage extends StatefulWidget {
   @override
@@ -40,14 +41,28 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
     );
   }
 
-  Widget buildCOverImage() => Container(
-        color: Colors.grey,
-        child: Image.asset(
-          'assets/profil.jpg',
-          width: double.infinity,
-          height: coverHeight,
-          fit: BoxFit.cover,
-        ),
+  Widget buildCOverImage() => Stack(
+        children: [
+          Container(
+            color: Colors.grey,
+            child: Image.asset(
+              'assets/profil.jpg',
+              width: double.infinity,
+              height: coverHeight,
+              fit: BoxFit.cover,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              FontAwesomeIcons.arrowLeft,
+              color: Colors.white,
+            ),
+            tooltip: 'Kembali',
+          ),
+        ],
       );
 
   Widget buildProfileImage() => Container(
@@ -76,14 +91,14 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
         ),
       );
 
-  Widget buildSocialMediaIcon(IconData icon) => CircleAvatar(
+  Widget buildSocialMediaIcon(IconData icon, Function fungsi) => CircleAvatar(
         radius: 25,
         child: Material(
           shape: CircleBorder(),
           clipBehavior: Clip.hardEdge,
           color: Colors.transparent,
           child: InkWell(
-            onTap: () {},
+            onTap: () => fungsi(),
             child: Center(
               child: Icon(
                 icon,
@@ -101,10 +116,10 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
             Column(
               children: [
                 Text(
-                  'PDAM',
+                  'PERUMDA AIR MINUM BAYUANGGA',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    fontSize: 21,
                   ),
                 ),
                 Text(
@@ -119,23 +134,54 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                buildSocialMediaIcon(FontAwesomeIcons.facebook),
+                buildSocialMediaIcon(FontAwesomeIcons.facebook, () async {
+                  final url = 'https://www.facebook.com/pdam.probolinggokota';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                  // } else {
+                  //   print('cant launch');
+                  // }
+                }),
                 SizedBox(
                   width: 12,
                 ),
-                buildSocialMediaIcon(FontAwesomeIcons.globe),
+                buildSocialMediaIcon(FontAwesomeIcons.globe, () async {
+                  final url = 'https://pdam.probolinggokota.go.id/';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                  // } else {
+                  //   print('cant launch');
+                  // }
+                }),
                 SizedBox(
                   width: 12,
                 ),
-                buildSocialMediaIcon(FontAwesomeIcons.phone),
+                buildSocialMediaIcon(FontAwesomeIcons.phone, () async {
+                  final url = 'tel:0335422254';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                  // }
+                  // print('tel');
+                }),
                 SizedBox(
                   width: 12,
                 ),
-                buildSocialMediaIcon(Icons.email),
+                buildSocialMediaIcon(Icons.email, () async {
+                  final url =
+                      'mailto:pdam.probolinggo@yahoo.co.id?${Uri.encodeFull('Pertanyaan')}&body=${Uri.encodeFull('Hallo PDAM KOta Probolinggo..')}';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  }
+                }),
                 SizedBox(
                   width: 12,
                 ),
-                buildSocialMediaIcon(Icons.location_on_rounded),
+                buildSocialMediaIcon(Icons.location_on_rounded, () async {
+                  final url =
+                      'https://www.google.co.id/maps/place/Jl.+Hayam+Wuruk+No.5,+Jati,+Kec.+Mayangan,+Kota+Probolinggo,+Jawa+Timur+67217/@-7.7570911,113.2241326,17z/data=!3m1!4b1!4m5!3m4!1s0x2dd7ada59e31334f:0x88fcfd0de770f8ec!8m2!3d-7.7570911!4d113.2263213';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                }),
               ],
             ),
             SizedBox(
