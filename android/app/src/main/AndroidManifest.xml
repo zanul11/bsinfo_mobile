@@ -5,7 +5,7 @@
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
    <application
-        android:label="bsainfo_mobile"
+        android:label="BSINFO"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
