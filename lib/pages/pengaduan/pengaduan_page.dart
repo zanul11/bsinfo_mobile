@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/koneksi.dart';
@@ -117,8 +119,15 @@ class _PengaduanPageState extends State<PengaduanPage> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorTagihan,
-        title: Text('Pengaduan Pelanggan'),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        title: Text(
+          'Pengaduan Pelanggan',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       backgroundColor: Colors.grey[100],
       body: (!loadWidget)

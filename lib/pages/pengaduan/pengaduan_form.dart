@@ -246,9 +246,14 @@ class _PengaduanFormState extends State<PengaduanForm> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorTagihan,
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
         title: Text(
           'Form Pengaduan',
+          style: TextStyle(color: Colors.black),
         ),
       ),
       floatingActionButton: (_currentStep == 1)
@@ -325,7 +330,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
             children: [
               Container(
                 color: Colors.white,
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(15),
                 child: Column(
                   children: [
                     Row(

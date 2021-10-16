@@ -133,8 +133,15 @@ class _BacaMandiriPageState extends State<BacaMandiriPage> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorTagihan,
-        title: Text('Baca Mandiri'),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        title: Text(
+          'Baca Mandiri',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       backgroundColor: Colors.grey[100],
       body: (!loadWidget)

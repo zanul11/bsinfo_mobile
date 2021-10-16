@@ -43,7 +43,15 @@ class _TagihanPageState extends State<TagihanPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Tagihan Rekening'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        title: Text(
+          'Tagihan Rekening',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Form(
         key: formKey,
@@ -66,7 +74,7 @@ class _TagihanPageState extends State<TagihanPage> {
                 },
                 onChanged: (v) {
                   setState(() {
-                    if (v != '') {
+                    if (v != '' && v.length > 5) {
                       _tombomasuk = true;
                     } else {
                       _tombomasuk = false;
@@ -80,6 +88,8 @@ class _TagihanPageState extends State<TagihanPage> {
                     Icons.person,
                     color: Colors.grey,
                   ),
+                  fillColor: Colors.white,
+                  filled: true,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(color: Colors.grey),
@@ -100,35 +110,49 @@ class _TagihanPageState extends State<TagihanPage> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                height: 75,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.grey.shade200,
-                      width: 1.0,
+              child: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  height: 75,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.grey.shade200,
+                        width: 1.0,
+                      ),
                     ),
                   ),
-                ),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor:
-                        (!_tombomasuk) ? Colors.grey : colorTagihan,
-                  ),
-                  onPressed: () async {
-                    try {
-                      final result = await InternetAddress.lookup('google.com');
-                      if (result.isNotEmpty &&
-                          result[0].rawAddress.isNotEmpty) {
-                        if (formKey.currentState!.validate()) {
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor:
+                          (!_tombomasuk) ? Colors.grey : colorTagihan,
+                    ),
+                    onPressed: () async {
+                      Navigator.pushNamed(context, '/tagihan-riwayat');
+                      try {
+                        final result =
+                            await InternetAddress.lookup('google.com');
+                        if (result.isNotEmpty &&
+                            result[0].rawAddress.isNotEmpty) {
+                          if (formKey.currentState!.validate()) {
+                            setState(() {
+                              _loading = true;
+                            });
+                          }
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: 'Tidak ada koneksi internet!',
+                            backgroundColor: Colors.red,
+                            textColor: whiteColor,
+                          );
                           setState(() {
-                            _loading = true;
+                            _loading = false;
                           });
                         }
-                      } else {
+                      } on SocketException catch (_) {
                         Fluttertoast.showToast(
                           msg: 'Tidak ada koneksi internet!',
                           backgroundColor: Colors.red,
@@ -138,29 +162,20 @@ class _TagihanPageState extends State<TagihanPage> {
                           _loading = false;
                         });
                       }
-                    } on SocketException catch (_) {
-                      Fluttertoast.showToast(
-                        msg: 'Tidak ada koneksi internet!',
-                        backgroundColor: Colors.red,
-                        textColor: whiteColor,
-                      );
-                      setState(() {
-                        _loading = false;
-                      });
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      (_loading)
-                          ? CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : Text(
-                              'TAMPILKAN',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                    ],
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        (_loading)
+                            ? CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                'TAMPILKAN',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                      ],
+                    ),
                   ),
                 ),
               ),
