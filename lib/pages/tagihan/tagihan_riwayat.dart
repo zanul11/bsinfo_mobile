@@ -135,7 +135,7 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      print('detail tagihan');
+                      Navigator.pushNamed(context, '/tagihan-detail');
                     },
                     child: Row(
                       children: [

@@ -10,6 +10,7 @@ import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_form.dart';
 import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_page.dart';
 import 'package:bsainfo_mobile/pages/profile/profile.dart';
 import 'package:bsainfo_mobile/pages/splash_page.dart';
+import 'package:bsainfo_mobile/pages/tagihan/tagihan_detail.dart';
 import 'package:bsainfo_mobile/pages/tagihan/tagihan_page.dart';
 import 'package:bsainfo_mobile/pages/tagihan/tagihan_riwayat.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/tagihan': (context) => TagihanPage(),
         '/tagihan-riwayat': (context) => TagihanRiwayat(),
+        '/tagihan-detail': (context) => TagihanDetail(),
         '/pengaduan': (context) => PengaduanPage(),
         '/pengaduan-form': (context) => PengaduanForm(),
         '/bacamandiri': (context) => BacaMandiriPage(),
