@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bsainfo_mobile/models/bacamandiri_model.dart';
+import 'package:bsainfo_mobile/models/cekTagihan_model.dart';
 import 'package:bsainfo_mobile/models/detail_pelanggan_model.dart';
 import 'package:bsainfo_mobile/models/jenis_pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/login_model.dart';
@@ -25,7 +26,7 @@ class Api {
       "nama": nama,
       "token": token,
     });
-    print(_response.statusCode);
+
     if (_response.statusCode == 200) {
       return loginModelFromJson(_response.body);
     } else {
@@ -44,7 +45,7 @@ class Api {
       "password": password,
       "token": token,
     });
-    print(_response.statusCode);
+
     if (_response.statusCode == 200) {
       return loginModelFromJson(_response.body);
     } else {
@@ -71,7 +72,6 @@ class Api {
       "nohp": prefs.getString('nohp'),
       "no_pelanggan": nopel,
     });
-    print(_response.body);
     if (_response.statusCode == 200) {
       return json.decode(_response.body);
     } else {
@@ -82,7 +82,6 @@ class Api {
   Future<Map<String, dynamic>> hapusPelanggan({required String id}) async {
     final String _url = '$apiUrl/deletePelanggan/$id';
     final _response = await client.get(Uri.parse(_url));
-    print(_response.statusCode);
     if (_response.statusCode == 200) {
       return json.decode(_response.body);
     } else {
@@ -93,7 +92,6 @@ class Api {
   Future<PengaduanModel> getPengaduan({required String nopel}) async {
     final String _url = '$apiUrl/getPengaduan/$nopel';
     final _response = await client.get(Uri.parse(_url));
-    print(_response.body);
     if (_response.statusCode == 200) {
       return pengaduanModelFromJson(_response.body);
     } else {
@@ -104,7 +102,6 @@ class Api {
   Future<JenisPengaduanModel> getJenisPengaduan() async {
     final String _url = '$apiUrl/getJenisPengaduan';
     final _response = await client.get(Uri.parse(_url));
-    print(_response.body);
     if (_response.statusCode == 200) {
       return jenisPengaduanModelFromJson(_response.body);
     } else {
@@ -115,7 +112,6 @@ class Api {
   Future<DetailPelangganModel> detailPelanggan({required String nopel}) async {
     final String _url = '$apiUrl/detailPelanggan/$nopel';
     final _response = await client.get(Uri.parse(_url));
-    print(_response.body);
     if (_response.statusCode == 200) {
       return detailPelangganModelFromJson(_response.body);
     } else {
@@ -142,7 +138,6 @@ class Api {
       "jenis_aduan_id": jenisAduan,
       "keterangan": keterangan,
     });
-    print(_response.body);
     if (_response.statusCode == 200) {
       return json.decode(_response.body);
     } else {
@@ -163,7 +158,6 @@ class Api {
       "foto": foto,
       "memo": keterangan,
     });
-    print(_response.body);
     if (_response.statusCode == 200) {
       return json.decode(_response.body);
     } else {
@@ -174,9 +168,30 @@ class Api {
   Future<BacaMandiriModel> getBacaMandiri({required String nopel}) async {
     final String _url = '$apiUrl/getBacaMandiri/$nopel';
     final _response = await client.get(Uri.parse(_url));
-    print(_response.body);
     if (_response.statusCode == 200) {
       return bacaMandiriModelFromJson(_response.body);
+    } else {
+      throw Exception('Server Error');
+    }
+  }
+
+  Future<CekTagihan> getListTagihan({required String nopel}) async {
+    final String _url = '$apiUrl/cekTagihan/$nopel';
+    final _response = await client.get(Uri.parse(_url));
+    if (_response.statusCode == 200) {
+      return cekTagihanFromJson(_response.body);
+    } else {
+      throw Exception('Server Error');
+    }
+  }
+
+  Future<Map<String, dynamic>> getTagihanUserBulanan(
+      {required String nopel}) async {
+    final String _url = '$apiUrl/cekTagihanUser/$nopel';
+    final _response = await client.get(Uri.parse(_url));
+    print(_response.body);
+    if (_response.statusCode == 200) {
+      return json.decode(_response.body);
     } else {
       throw Exception('Server Error');
     }

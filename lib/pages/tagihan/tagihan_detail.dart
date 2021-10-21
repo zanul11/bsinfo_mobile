@@ -1,7 +1,11 @@
+import 'package:bsainfo_mobile/models/cekTagihan_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TagihanDetail extends StatefulWidget {
+  final ResultTagihan tagihan;
+  TagihanDetail({required this.tagihan});
   @override
   _TagihanDetailState createState() => _TagihanDetailState();
 }
@@ -9,6 +13,22 @@ class TagihanDetail extends StatefulWidget {
 class _TagihanDetailState extends State<TagihanDetail> {
   final double coverHeight = 150;
   final double profileHeight = 72;
+
+  final namaBulan = [
+    "",
+    "Januari",
+    "Februar1",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +55,15 @@ class _TagihanDetailState extends State<TagihanDetail> {
         ],
       ),
     );
+  }
+
+  String moneyFormat(String price) {
+    var value = price;
+    if (price.length > 2) {
+      value = value.replaceAll(RegExp(r'\D'), '');
+      value = value.replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',');
+    }
+    return value;
   }
 
   Widget headerTagihan({required double top, required double bottom}) =>
@@ -69,7 +98,9 @@ class _TagihanDetailState extends State<TagihanDetail> {
                 bottom: top,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: (widget.tagihan.tagihan.isPaid == 1)
+                        ? Colors.green
+                        : Colors.red,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -80,14 +111,18 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                   child: CircleAvatar(
                     radius: profileHeight / 2,
-                    backgroundColor: Colors.green,
+                    backgroundColor: (widget.tagihan.tagihan.isPaid == 1)
+                        ? Colors.green
+                        : Colors.red,
                     // backgroundImage: AssetImage('assets/logos.png', ),
                     child: ClipRRect(
                       // borderRadius: BorderRadius.circular(profileHeight / 2),
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Icon(
-                          Icons.check,
+                          (widget.tagihan.tagihan.isPaid == 1)
+                              ? Icons.check
+                              : Icons.close,
                           color: Colors.white,
                           size: profileHeight / 2,
                         ),
@@ -99,10 +134,14 @@ class _TagihanDetailState extends State<TagihanDetail> {
               Positioned(
                 bottom: top - 30,
                 child: Text(
-                  'Sudah Terbayar',
+                  (widget.tagihan.tagihan.isPaid == 1)
+                      ? 'Sudah Terbayar'
+                      : 'Belum Bayar',
                   style: GoogleFonts.nunito(
                     fontSize: 17,
-                    color: Colors.green,
+                    color: (widget.tagihan.tagihan.isPaid == 1)
+                        ? Colors.green
+                        : Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -125,7 +164,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                             width: 30,
                           ),
                           Text(
-                            '2000',
+                            '${widget.tagihan.tagihan.stanIni}',
                             style: GoogleFonts.nunito(),
                           ),
                         ],
@@ -141,7 +180,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                             width: 30,
                           ),
                           Text(
-                            '1900',
+                            '${widget.tagihan.tagihan.stanLalu}',
                             style: GoogleFonts.nunito(),
                           ),
                         ],
@@ -157,7 +196,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                             width: 30,
                           ),
                           Text(
-                            '10',
+                            '${widget.tagihan.tagihan.pemakaian}',
                             style: GoogleFonts.nunito(),
                           ),
                         ],
@@ -173,7 +212,9 @@ class _TagihanDetailState extends State<TagihanDetail> {
                             width: 30,
                           ),
                           Text(
-                            '03 Oktober 2021',
+                            (widget.tagihan.tagihan.isPaid == 0)
+                                ? '-'
+                                : '${widget.tagihan.tagihan.tglBayar}',
                             style: GoogleFonts.nunito(),
                           ),
                         ],
@@ -185,32 +226,38 @@ class _TagihanDetailState extends State<TagihanDetail> {
             ],
           ));
 
-  Widget detailFoto() => Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        height: 250,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              offset: Offset(0.0, 1.0), //(x,y)
-              blurRadius: 6.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: NetworkImage(
-                'https://images.tokopedia.net/img/cache/500-square/product-1/2017/11/12/0/0_51312531-d99b-4231-9a06-cf6e3c24a6de_700_933.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Text(
-          'Foto Water Meter',
-          style: GoogleFonts.nunito(
+  Widget detailFoto() => InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+            return FotoDetail(gambar: widget.tagihan.tagihan.bacameter.foto1);
+          }));
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          height: 250,
+          decoration: BoxDecoration(
             color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                offset: Offset(0.0, 1.0), //(x,y)
+                blurRadius: 6.0,
+              ),
+            ],
+            image: DecorationImage(
+              image: NetworkImage('${widget.tagihan.tagihan.bacameter.foto1}'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Text(
+            'Foto Water Meter',
+            style: GoogleFonts.nunito(
+              color: Colors.white,
+            ),
           ),
         ),
       );
@@ -246,7 +293,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                 ),
                 Expanded(
                   child: Text(
-                    'Oktober 2021',
+                    '${namaBulan[int.parse(widget.tagihan.tagihan.periode.toString().substring(4, 6))]} ${widget.tagihan.tagihan.periode.toString().substring(0, 4)}',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -281,18 +328,37 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.hargaAir.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
                 ),
               ],
             ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: Text(
+            //         'Air Limbah',
+            //         style: GoogleFonts.nunito(
+            //           color: Colors.grey,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //     ),
+            //     Text(
+            //       '0',
+            //       style: GoogleFonts.nunito(
+            //         color: Colors.black,
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    'Air Limbah',
+                    'Denda',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -300,7 +366,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.denda.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -319,7 +385,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byAdministrasi.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -338,7 +404,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byRetribusi.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -357,7 +423,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byPemeliharaan.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -368,7 +434,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
               children: [
                 Expanded(
                   child: Text(
-                    'Pelayanan',
+                    'Lingkungan',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -376,7 +442,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byLingkungan.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -395,7 +461,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byMaterai.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -406,7 +472,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
               children: [
                 Expanded(
                   child: Text(
-                    'PPN',
+                    'Lainnya',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -414,7 +480,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat(widget.tagihan.tagihan.byLainnya.toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                   ),
@@ -437,7 +503,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  'RP. 300.000',
+                  '${moneyFormat((widget.tagihan.tagihan.hargaAir + widget.tagihan.tagihan.byPemeliharaan + widget.tagihan.tagihan.byRetribusi + widget.tagihan.tagihan.byAdministrasi + widget.tagihan.tagihan.byLingkungan + widget.tagihan.tagihan.byMaterai + widget.tagihan.tagihan.byLainnya + widget.tagihan.denda).toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -452,4 +518,35 @@ class _TagihanDetailState extends State<TagihanDetail> {
           ],
         ),
       );
+}
+
+class FotoDetail extends StatelessWidget {
+  final String gambar;
+  FotoDetail({required this.gambar});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: InteractiveViewer(
+      child: GestureDetector(
+        child: Container(
+          child: Center(
+            child: Hero(
+              tag: 'imageHero',
+              child: CachedNetworkImage(
+                imageUrl: gambar,
+                placeholder: (context, url) => Container(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    ));
+  }
 }

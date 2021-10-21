@@ -1,9 +1,22 @@
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/pages/tagihan/tagihan_riwayat.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
-Padding tagihanWidget(Size ukuranLayar) {
+String moneyFormat(String price) {
+  var value = price;
+  if (price.length > 2) {
+    value = value.replaceAll(RegExp(r'\D'), '');
+    value = value.replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',');
+  }
+  return value;
+}
+
+Padding tagihanWidget(
+    Size ukuranLayar, String bayar, String nopel, BuildContext context) {
   return Padding(
     padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 10),
     child: Column(
@@ -23,7 +36,7 @@ Padding tagihanWidget(Size ukuranLayar) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Tagihan Air Anda bulan Maret',
+                'Tagihan Air Anda bulan ini',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
@@ -39,7 +52,7 @@ Padding tagihanWidget(Size ukuranLayar) {
                     ),
                   ),
                   Text(
-                    '50.000',
+                    '${moneyFormat(bayar)}',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
@@ -49,13 +62,57 @@ Padding tagihanWidget(Size ukuranLayar) {
                 ],
               ),
               Text(
-                'Bayar Tagihan Anda sebelum Tanggal 25',
+                'Bayar Tagihan Anda sebelum Tanggal 20',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: Colors.white70,
                   fontSize: 11,
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Expanded(child: Container()),
+                  Material(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Api().getListTagihan(nopel: nopel).then((value) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (ctx) {
+                            return TagihanRiwayat(
+                                listTagihan: value.resultTagihan);
+                          }));
+                        }).catchError((onError) {
+                          Fluttertoast.showToast(
+                            msg: 'Server Error!',
+                            backgroundColor: Colors.red,
+                            textColor: whiteColor,
+                          );
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Lihat rekening',
+                            style: GoogleFonts.nunito(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
             ],
           ),
         ),

@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/pages/tagihan/tagihan_riwayat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -130,39 +132,74 @@ class _TagihanPageState extends State<TagihanPage> {
                       backgroundColor:
                           (!_tombomasuk) ? Colors.grey : colorTagihan,
                     ),
-                    onPressed: () async {
-                      Navigator.pushNamed(context, '/tagihan-riwayat');
-                      try {
-                        final result =
-                            await InternetAddress.lookup('google.com');
-                        if (result.isNotEmpty &&
-                            result[0].rawAddress.isNotEmpty) {
-                          if (formKey.currentState!.validate()) {
-                            setState(() {
-                              _loading = true;
-                            });
-                          }
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Tidak ada koneksi internet!',
-                            backgroundColor: Colors.red,
-                            textColor: whiteColor,
-                          );
-                          setState(() {
-                            _loading = false;
-                          });
-                        }
-                      } on SocketException catch (_) {
-                        Fluttertoast.showToast(
-                          msg: 'Tidak ada koneksi internet!',
-                          backgroundColor: Colors.red,
-                          textColor: whiteColor,
-                        );
-                        setState(() {
-                          _loading = false;
-                        });
-                      }
-                    },
+                    onPressed: (!_tombomasuk)
+                        ? null
+                        : () async {
+                            try {
+                              final result =
+                                  await InternetAddress.lookup('google.com');
+                              if (result.isNotEmpty &&
+                                  result[0].rawAddress.isNotEmpty) {
+                                if (formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _loading = true;
+                                  });
+                                  Api()
+                                      .getListTagihan(nopel: nopel.text.trim())
+                                      .then((value) {
+                                    if (!value.status) {
+                                      Fluttertoast.showToast(
+                                        msg: 'Tagihan Tidak Ditemukan!',
+                                        backgroundColor: Colors.red,
+                                        textColor: whiteColor,
+                                      );
+                                      setState(() {
+                                        _loading = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _loading = false;
+                                      });
+                                      // Navigator.pushNamed(
+                                      //     context, '/tagihan-riwayat');
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (ctx) {
+                                        return TagihanRiwayat(
+                                            listTagihan: value.resultTagihan);
+                                      }));
+                                    }
+                                  }).catchError((onError) {
+                                    Fluttertoast.showToast(
+                                      msg: 'Server Error!',
+                                      backgroundColor: Colors.red,
+                                      textColor: whiteColor,
+                                    );
+                                    setState(() {
+                                      _loading = false;
+                                    });
+                                  });
+                                }
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg: 'Tidak ada koneksi internet!',
+                                  backgroundColor: Colors.red,
+                                  textColor: whiteColor,
+                                );
+                                setState(() {
+                                  _loading = false;
+                                });
+                              }
+                            } on SocketException catch (_) {
+                              Fluttertoast.showToast(
+                                msg: 'Tidak ada koneksi internet!',
+                                backgroundColor: Colors.red,
+                                textColor: whiteColor,
+                              );
+                              setState(() {
+                                _loading = false;
+                              });
+                            }
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   bool cekLogin = false;
   String namaSUer = '', nohp = '';
   bool loadWidget = false;
+  bool isLunas = false;
+  String tagihanRekening = '0';
 
   getCekLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,8 +34,28 @@ class _HomePageState extends State<HomePage> {
         cekLogin = true;
         namaSUer = prefs.getString('nama')!;
         nohp = prefs.getString('nohp')!;
-        if (prefs.containsKey('selectedNoPel'))
+        if (prefs.containsKey('selectedNoPel')) {
           selectedNo = prefs.getString('selectedNoPel')!;
+          api
+              .getTagihanUserBulanan(nopel: prefs.getString('selectedNoPel')!)
+              .then((value) {
+            isLunas = false;
+            if (value['status']) {
+              setState(() {
+                isLunas = true;
+                tagihanRekening = value['result'].toString();
+              });
+            } else {
+              setState(() {
+                isLunas = false;
+              });
+            }
+          }).catchError((onError) {
+            setState(() {
+              isLunas = false;
+            });
+          });
+        }
       });
       getUser();
     } else {
@@ -73,8 +95,28 @@ class _HomePageState extends State<HomePage> {
       } else {
         setState(() {
           listPelanggan = value.result;
-          if (!prefs.containsKey('selectedNoPel'))
+          if (!prefs.containsKey('selectedNoPel')) {
             selectedNo = listPelanggan[0].noPelanggan;
+            api
+                .getTagihanUserBulanan(nopel: listPelanggan[0].noPelanggan)
+                .then((value) {
+              isLunas = false;
+              if (value['status']) {
+                setState(() {
+                  isLunas = true;
+                  tagihanRekening = value['result'].toString();
+                });
+              } else {
+                setState(() {
+                  isLunas = false;
+                });
+              }
+            }).catchError((onError) {
+              setState(() {
+                isLunas = false;
+              });
+            });
+          }
           loadWidget = true;
         });
       }
@@ -108,6 +150,10 @@ class _HomePageState extends State<HomePage> {
                       selectedNo = listPelanggan[index].noPelanggan;
                       prefs.setString(
                           'selectedNoPel', listPelanggan[index].noPelanggan);
+                      setState(() {
+                        loadWidget = false;
+                      });
+                      getCekLogin();
                     });
                     Navigator.pop(context);
                   },
@@ -254,7 +300,10 @@ class _HomePageState extends State<HomePage> {
                       ? cardNewUser(ukuranLayar, context)
                       : (listPelanggan.length == 0)
                           ? tagihanBelumDaftar(ukuranLayar, context)
-                          : tagihanWidget(ukuranLayar)),
+                          : (isLunas)
+                              ? tagihanWidget(ukuranLayar, tagihanRekening,
+                                  selectedNo, context)
+                              : tagihanLunas(ukuranLayar, selectedNo, context)),
               menuWidget(ukuranLayar, context),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
