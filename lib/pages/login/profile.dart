@@ -33,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (value.message == 'tidak ditemukan') {
         setState(() {
           // countPelanggan = 0;
+          loadWidget = true;
           listPelanggan = List.empty();
         });
       } else {
