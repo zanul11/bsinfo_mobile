@@ -241,7 +241,7 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     Radius.circular(10),
                   ),
                   child: InkWell(
-                    onTap: () => null,
+                    onTap: () => Navigator.pushNamed(context, '/pembayaran'),
                     child: Padding(
                       padding: const EdgeInsets.all(7.0),
                       child: Column(

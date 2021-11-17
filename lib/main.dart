@@ -6,6 +6,7 @@ import 'package:bsainfo_mobile/pages/home/home_page.dart';
 import 'package:bsainfo_mobile/pages/login/login_page.dart';
 import 'package:bsainfo_mobile/pages/login/profile.dart';
 import 'package:bsainfo_mobile/pages/login/register_page.dart';
+import 'package:bsainfo_mobile/pages/pembayaran/pembayaran_page.dart';
 import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_form.dart';
 import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_page.dart';
 import 'package:bsainfo_mobile/pages/profile/profile.dart';
@@ -90,6 +91,7 @@ class MyApp extends StatelessWidget {
         '/bacamandiri': (context) => BacaMandiriPage(),
         '/bacamandiri-form': (context) => BacaMandiriForm(),
         '/profile-perusahaan': (contex) => ProfilePerusahaanPage(),
+        '/pembayaran': (context) => PembayaranPage(),
       },
     );
   }

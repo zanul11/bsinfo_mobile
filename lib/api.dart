@@ -196,4 +196,37 @@ class Api {
       throw Exception('Server Error');
     }
   }
+
+  Future<Map<String, dynamic>> generateVABankJatim({
+    required String noVA,
+    required String tagihan,
+    required String batas,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String _url = 'https://jatimva.bankjatim.co.id/Va/RegPen';
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final msg = jsonEncode({
+      "VirtualAccount": noVA,
+      "Nama": "${prefs.getString('nama')!} PDAM Probo Testing",
+      "TotalTagihan": tagihan,
+      "TanggalExp": batas,
+      "Berita1": "Pembayaran Rekening PDAM Probolinggo",
+      "Berita2": "INFO 2",
+      "Berita3": "INFO 3",
+      "Berita4": "INFO 4",
+      "Berita5": "INFO 5",
+      "FlagProses": 1
+    });
+    final _response = await client.post(
+      Uri.parse(_url),
+      headers: headers,
+      body: msg,
+    );
+    print(_response.body);
+    if (_response.statusCode == 200) {
+      return json.decode(_response.body);
+    } else {
+      throw Exception('Server Error');
+    }
+  }
 }
