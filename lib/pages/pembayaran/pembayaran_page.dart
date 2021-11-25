@@ -212,8 +212,10 @@ class _PembayaranPageState extends State<PembayaranPage> {
                         ],
                       ),
                     ),
-                    tagihanWidget(MediaQuery.of(context).size, tagihanRekening,
-                        selectedNo, context)
+                    (listPelanggan.length == 0)
+                        ? Container()
+                        : tagihanWidget(MediaQuery.of(context).size,
+                            tagihanRekening, selectedNo, context)
                   ],
                 ),
                 Align(
@@ -233,48 +235,59 @@ class _PembayaranPageState extends State<PembayaranPage> {
                     ),
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        backgroundColor: colorTagihan,
+                        backgroundColor: (listPelanggan.length == 0)
+                            ? Colors.grey
+                            : colorTagihan,
                       ),
                       onPressed: () {
-                        var today = new DateTime.now();
-                        var datebatas = today.add(new Duration(days: 2));
-                        Random random = new Random();
-                        int randomNumber = random.nextInt(1000);
-                        print(
-                            "${datebatas.year}${datebatas.month}${datebatas.day}");
-                        api
-                            .generateVABankJatim(
-                                batas:
-                                    "${datebatas.year}${datebatas.month}${datebatas.day}",
-                                noVA: "14812101$selectedNo$randomNumber",
-                                tagihan: tagihanRekening)
-                            .then((value) {
-                          if (!value['Status']['IsError']) {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (ctx) {
-                              return PembayaranVAPage(
-                                noVa: value['VirtualAccount'],
-                                batas:
-                                    "${datebatas.day}-${datebatas.month}-${datebatas.year}",
-                                total: int.parse(tagihanRekening),
+                        if (listPelanggan.length == 0) {
+                          Fluttertoast.showToast(
+                            msg:
+                                'Tambah nomer pelanggan pada menu profile terlebih dahulu!',
+                            backgroundColor: Colors.orange,
+                            textColor: whiteColor,
+                          );
+                        } else {
+                          var today = new DateTime.now();
+                          var datebatas = today.add(new Duration(days: 2));
+                          Random random = new Random();
+                          int randomNumber = random.nextInt(1000);
+                          print(
+                              "${datebatas.year}${datebatas.month}${datebatas.day}");
+                          api
+                              .generateVABankJatim(
+                                  batas:
+                                      "${datebatas.year}${datebatas.month}${datebatas.day}",
+                                  noVA: "14812101$selectedNo$randomNumber",
+                                  tagihan: tagihanRekening)
+                              .then((value) {
+                            if (!value['Status']['IsError']) {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (ctx) {
+                                return PembayaranVAPage(
+                                  noVa: value['VirtualAccount'],
+                                  batas:
+                                      "${datebatas.day}-${datebatas.month}-${datebatas.year}",
+                                  total: int.parse(tagihanRekening),
+                                );
+                              }));
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: value['Status']['ErrorDesc'],
+                                backgroundColor: Colors.red,
+                                toastLength: Toast.LENGTH_LONG,
+                                textColor: whiteColor,
                               );
-                            }));
-                          } else {
+                            }
+                          }).catchError((onError) {
                             Fluttertoast.showToast(
-                              msg: value['Status']['ErrorDesc'],
+                              msg: 'Server Error!',
                               backgroundColor: Colors.red,
                               toastLength: Toast.LENGTH_LONG,
                               textColor: whiteColor,
                             );
-                          }
-                        }).catchError((onError) {
-                          Fluttertoast.showToast(
-                            msg: 'Server Error!',
-                            backgroundColor: Colors.red,
-                            toastLength: Toast.LENGTH_LONG,
-                            textColor: whiteColor,
-                          );
-                        });
+                          });
+                        }
                       },
                       child: Text(
                         'Bayar Via Bank Jatim (VA)',

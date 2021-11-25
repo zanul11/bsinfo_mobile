@@ -22,7 +22,7 @@ Padding cardNewUser(Size ukuranLayar, BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Selamat datang di Aplikasi BS INFO PDAM Kota Probolinggo',
+                'Selamat datang di Sistem Mobile Bayuangga PDAM Kota Probolinggo',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: Colors.white,

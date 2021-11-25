@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Expanded(
                       child: Text(
-                        (!cekLogin) ? 'BS INFO' : 'Halo $namaSUer',
+                        (!cekLogin) ? 'Si Moba' : 'Halo $namaSUer',
                         style: GoogleFonts.poppins(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
