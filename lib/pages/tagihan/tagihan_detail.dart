@@ -453,6 +453,25 @@ class _TagihanDetailState extends State<TagihanDetail> {
               children: [
                 Expanded(
                   child: Text(
+                    'Angsuran',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${moneyFormat(widget.tagihan.tagihan.byAngsuran.toString())}',
+                  style: GoogleFonts.nunito(
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
                     'Materai',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
@@ -503,7 +522,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                   ),
                 ),
                 Text(
-                  '${moneyFormat((widget.tagihan.tagihan.hargaAir + widget.tagihan.tagihan.byPemeliharaan + widget.tagihan.tagihan.byRetribusi + widget.tagihan.tagihan.byAdministrasi + widget.tagihan.tagihan.byLingkungan + widget.tagihan.tagihan.byMaterai + widget.tagihan.tagihan.byLainnya + widget.tagihan.denda).toString())}',
+                  '${moneyFormat((widget.tagihan.tagihan.hargaAir + widget.tagihan.tagihan.byPemeliharaan + widget.tagihan.tagihan.byRetribusi + widget.tagihan.tagihan.byAdministrasi + widget.tagihan.tagihan.byLingkungan + widget.tagihan.tagihan.byMaterai + widget.tagihan.tagihan.byLainnya + widget.tagihan.denda + widget.tagihan.tagihan.byAngsuran).toString())}',
                   style: GoogleFonts.nunito(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

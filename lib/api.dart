@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
   Client client = Client();
-  final apiUrl = 'https://api.garagebit.xyz/api';
+  final apiUrl = 'https://api.pudam-bayuangga.id/api';
   Future<LoginModel> doRegister({
     required String nohp,
     required String nama,

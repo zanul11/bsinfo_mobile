@@ -64,6 +64,7 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                 widget.listTagihan[index].tagihan.byLingkungan +
                 widget.listTagihan[index].tagihan.byMaterai +
                 widget.listTagihan[index].tagihan.byLainnya +
+                widget.listTagihan[index].tagihan.byAngsuran +
                 widget.listTagihan[index].denda),
             tagihan: widget.listTagihan[index],
           ),

@@ -66,6 +66,7 @@ class Tagihan {
     required this.byMaterai,
     required this.byLainnya,
     required this.hargaAir,
+    required this.byAngsuran,
     required this.userId,
     required this.tglBayar,
     required this.isPaid,
@@ -85,6 +86,7 @@ class Tagihan {
   dynamic byMaterai;
   dynamic byLainnya;
   dynamic hargaAir;
+  dynamic byAngsuran;
   dynamic userId;
   dynamic tglBayar;
   dynamic isPaid;
@@ -104,6 +106,7 @@ class Tagihan {
         byMaterai: json["by_materai"],
         byLainnya: json["by_lainnya"],
         hargaAir: json["harga_air"],
+        byAngsuran: json["by_angsuran"],
         userId: json["user_id"],
         tglBayar: json["tgl_bayar"],
         isPaid: json["is_paid"],
@@ -124,6 +127,7 @@ class Tagihan {
         "by_materai": byMaterai,
         "by_lainnya": byLainnya,
         "harga_air": hargaAir,
+        "by_angsuran": byAngsuran,
         "user_id": userId,
         "tgl_bayar": tglBayar,
         "is_paid": isPaid,
