@@ -96,7 +96,9 @@ Padding tagihanLunas(Size ukuranLayar, String nopel, BuildContext context) {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (ctx) {
                             return TagihanRiwayat(
-                                listTagihan: value.resultTagihan);
+                              nopel: nopel,
+                              listTagihan: value.resultTagihan,
+                            );
                           }));
                         }).catchError((onError) {
                           Fluttertoast.showToast(

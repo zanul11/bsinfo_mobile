@@ -3,7 +3,6 @@ import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/pages/tagihan/tagihan_riwayat.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -165,7 +164,9 @@ class _TagihanPageState extends State<TagihanPage> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (ctx) {
                                         return TagihanRiwayat(
-                                            listTagihan: value.resultTagihan);
+                                          listTagihan: value.resultTagihan,
+                                          nopel: nopel.text.trim(),
+                                        );
                                       }));
                                     }
                                   }).catchError((onError) {

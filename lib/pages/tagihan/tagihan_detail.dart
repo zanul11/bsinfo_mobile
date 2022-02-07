@@ -17,7 +17,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
   final namaBulan = [
     "",
     "Januari",
-    "Februar1",
+    "Februari",
     "Maret",
     "April",
     "Mei",
@@ -51,7 +51,9 @@ class _TagihanDetailState extends State<TagihanDetail> {
         children: [
           headerTagihan(bottom: bottom, top: top),
           detailTagihan(),
-          detailFoto(),
+          (widget.tagihan.tagihan.bacameter.foto1 == null)
+              ? Container()
+              : detailFoto(),
         ],
       ),
     );
@@ -157,7 +159,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Stand Ini',
+                            'Stan Ini',
                             style: GoogleFonts.nunito(),
                           ),
                           SizedBox(
@@ -229,37 +231,42 @@ class _TagihanDetailState extends State<TagihanDetail> {
   Widget detailFoto() => InkWell(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-            return FotoDetail(gambar: widget.tagihan.tagihan.bacameter.foto1);
+            return FotoDetail(
+                gambar:
+                    '${widget.tagihan.tagihan.bacameter.foto1.toString().replaceAll('http://api.pudam.net', 'https://api.pudam-bayuangga.id')}');
           }));
         },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          height: 250,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                offset: Offset(0.0, 1.0), //(x,y)
-                blurRadius: 6.0,
+        child: (widget.tagihan.tagihan.bacameter.foto1 == null)
+            ? Container()
+            : Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                height: 250,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      offset: Offset(0.0, 1.0), //(x,y)
+                      blurRadius: 6.0,
+                    ),
+                  ],
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        '${widget.tagihan.tagihan.bacameter.foto1.toString().replaceAll('http://api.pudam.net', 'https://api.pudam-bayuangga.id')}'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Text(
+                  'Foto Water Meter',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ],
-            image: DecorationImage(
-              image: NetworkImage('${widget.tagihan.tagihan.bacameter.foto1}'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Text(
-            'Foto Water Meter',
-            style: GoogleFonts.nunito(
-              color: Colors.white,
-            ),
-          ),
-        ),
       );
   Widget detailTagihan() => Container(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -320,7 +327,7 @@ class _TagihanDetailState extends State<TagihanDetail> {
               children: [
                 Expanded(
                   child: Text(
-                    'Biaya Pemakaian',
+                    'Harga Air',
                     style: GoogleFonts.nunito(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,

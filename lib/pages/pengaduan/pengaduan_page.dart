@@ -1,11 +1,8 @@
-import 'dart:ui';
-
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/koneksi.dart';
 import 'package:bsainfo_mobile/models/pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -336,10 +333,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                                   .start,
                                                           children: [
                                                             Text(
-                                                              listPengaduan[
-                                                                      index]
-                                                                  .jenis[0]
-                                                                  .nama,
+                                                              "${listPengaduan[index].jenis[0].nama} ( ${listPengaduan[index].createdAt.day}-${listPengaduan[index].createdAt.month}-${listPengaduan[index].createdAt.year} )",
                                                               style: GoogleFonts.poppins(
                                                                   fontSize: 14,
                                                                   fontWeight:
@@ -347,7 +341,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                                           .bold),
                                                             ),
                                                             Text(
-                                                              "${listPengaduan[index].createdAt.day}-${listPengaduan[index].createdAt.month}-${listPengaduan[index].createdAt.year}",
+                                                              "Nama pelapor : ${listPengaduan[index].nama}",
                                                               style: GoogleFonts.poppins(
                                                                   fontSize: 12,
                                                                   fontWeight:
@@ -372,6 +366,16 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                                     TextOverflow
                                                                         .ellipsis,
                                                               ),
+                                                            ),
+                                                            Text(
+                                                              "Selesai pada : ${listPengaduan[index].completedAt}",
+                                                              style: GoogleFonts.poppins(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .blue),
                                                             ),
                                                           ],
                                                         ),

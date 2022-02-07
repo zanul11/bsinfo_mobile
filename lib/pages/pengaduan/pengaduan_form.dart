@@ -5,7 +5,6 @@ import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/models/jenis_pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';

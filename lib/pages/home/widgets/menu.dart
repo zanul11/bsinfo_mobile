@@ -1,4 +1,6 @@
+import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 menuWidget(Size ukuranLayar, BuildContext context) {
@@ -241,7 +243,16 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     Radius.circular(10),
                   ),
                   child: InkWell(
-                    onTap: () => Navigator.pushNamed(context, '/pembayaran'),
+                    // onTap: () => Navigator.pushNamed(context, '/pembayaran'),
+                    onTap: () {
+                      Fluttertoast.showToast(
+                        msg: 'Dalam tahap pengembangan!',
+                        backgroundColor: Colors.green,
+                        toastLength: Toast.LENGTH_LONG,
+                        textColor: whiteColor,
+                      );
+                    },
+
                     child: Padding(
                       padding: const EdgeInsets.all(7.0),
                       child: Column(

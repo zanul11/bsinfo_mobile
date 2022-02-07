@@ -39,12 +39,14 @@ class ResultDetailPelanggan {
     required this.alamat,
     required this.merekMeter,
     required this.kodeGolongan,
+    required this.status,
   });
 
   dynamic nama;
   dynamic alamat;
   dynamic merekMeter;
   dynamic kodeGolongan;
+  int status;
 
   factory ResultDetailPelanggan.fromJson(Map<String, dynamic> json) =>
       ResultDetailPelanggan(
@@ -52,6 +54,7 @@ class ResultDetailPelanggan {
         alamat: json["alamat"],
         merekMeter: json["merek_meter"],
         kodeGolongan: json["kode_golongan"],
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -59,5 +62,6 @@ class ResultDetailPelanggan {
         "alamat": alamat,
         "merek_meter": merekMeter,
         "kode_golongan": kodeGolongan,
+        "status": status,
       };
 }

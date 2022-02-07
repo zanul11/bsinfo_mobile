@@ -6,7 +6,6 @@ import 'package:bsainfo_mobile/koneksi.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:bsainfo_mobile/pages/home/widgets/tagihan.dart';
 import 'package:bsainfo_mobile/pages/pembayaran/pembayaran_bayar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';

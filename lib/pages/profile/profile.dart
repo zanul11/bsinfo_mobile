@@ -178,7 +178,15 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                 ),
                 buildSocialMediaIcon(Icons.location_on_rounded, () async {
                   final url =
-                      'https://www.google.co.id/maps/place/Jl.+Hayam+Wuruk+No.5,+Jati,+Kec.+Mayangan,+Kota+Probolinggo,+Jawa+Timur+67217/@-7.7570911,113.2241326,17z/data=!3m1!4b1!4m5!3m4!1s0x2dd7ada59e31334f:0x88fcfd0de770f8ec!8m2!3d-7.7570911!4d113.2263213';
+                      'https://www.google.com/maps/place/PDAM+Kota+Probolinggo+Tirta+Dharma/@-7.7475422,113.2260545,17z/data=!3m1!4b1!4m5!3m4!1s0x2dd7ada574ed65b5:0xbd0cfcbbbb62440a!8m2!3d-7.7475273!4d113.2281324';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                }),
+                SizedBox(
+                  width: 12,
+                ),
+                buildSocialMediaIcon(FontAwesomeIcons.instagram, () async {
+                  final url = 'https://www.instagram.com/perumdambayuangga/';
                   // if (await canLaunch(url)) {
                   await launch(url);
                 }),
@@ -189,20 +197,37 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
             ),
             Divider(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23),
+              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Tentang',
+                    'Alamat',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 25,
+                      fontSize: 18,
                     ),
                   ),
                   Text(
-                    'Create a beautiful User Profile Page UI in Flutter with profile picture, profile image and cover image by using Circle Avatar, Stack and Positioned widgets in Flutter.',
-                    style: TextStyle(fontSize: 16, height: 1.4),
+                    'Jl. Hayam Wuruk No.5, Mangunharjo, Probolinggo, Kota Probolinggo, Jawa Timur 67214',
+                    style: TextStyle(fontSize: 14, height: 1.4),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'Telp.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    '0335 422254',
+                    style: TextStyle(fontSize: 14, height: 1.4),
+                    textAlign: TextAlign.center,
                   )
                 ],
               ),

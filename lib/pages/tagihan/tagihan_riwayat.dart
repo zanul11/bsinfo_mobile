@@ -1,3 +1,4 @@
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/models/cekTagihan_model.dart';
 import 'package:bsainfo_mobile/pages/tagihan/tagihan_detail.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 class TagihanRiwayat extends StatefulWidget {
   final List<ResultTagihan> listTagihan;
-  TagihanRiwayat({required this.listTagihan});
+  final String nopel;
+  TagihanRiwayat({required this.listTagihan, required this.nopel});
   @override
   _TagihanRiwayatState createState() => _TagihanRiwayatState();
 }
@@ -20,10 +22,32 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
     return value;
   }
 
+  String nopel = '';
+  String nama = '';
+  String alamat = '';
+  String gol = '';
+  String status = '1';
+
+  getDataPel() {
+    Api().detailPelanggan(nopel: widget.nopel).then((value) {
+      nama = value.resultDetailPelanggan[0].nama;
+      alamat = value.resultDetailPelanggan[0].alamat;
+      gol = value.resultDetailPelanggan[0].kodeGolongan;
+      status = value.resultDetailPelanggan[0].status.toString();
+      setState(() {});
+    });
+  }
+
+  @override
+  void initState() {
+    getDataPel();
+    super.initState();
+  }
+
   final namaBulan = [
     "",
     "Januari",
-    "Februar1",
+    "Februari",
     "Maret",
     "April",
     "Mei",
@@ -51,27 +75,237 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: ListView(
-        children: List.generate(
-          widget.listTagihan.length,
-          (index) => buildCardTagihan(
-            periode: widget.listTagihan[index].tagihan.periode,
-            statusBayar: widget.listTagihan[index].tagihan.isPaid.toString(),
-            jumlah: (widget.listTagihan[index].tagihan.hargaAir +
-                widget.listTagihan[index].tagihan.byPemeliharaan +
-                widget.listTagihan[index].tagihan.byRetribusi +
-                widget.listTagihan[index].tagihan.byAdministrasi +
-                widget.listTagihan[index].tagihan.byLingkungan +
-                widget.listTagihan[index].tagihan.byMaterai +
-                widget.listTagihan[index].tagihan.byLainnya +
-                widget.listTagihan[index].tagihan.byAngsuran +
-                widget.listTagihan[index].denda),
-            tagihan: widget.listTagihan[index],
+      body: Column(
+        children: [
+          buildDetailPel(),
+          Container(
+            padding: EdgeInsets.all(8),
+            color: Colors.white,
+            width: double.infinity,
+            child: Center(
+              child: Text(
+                'Riwayat Tagihan',
+                style: GoogleFonts.nunito(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
-        ),
+          Expanded(
+            child: ListView(
+              children: List.generate(
+                widget.listTagihan.length,
+                (index) => buildCardTagihan(
+                  periode: widget.listTagihan[index].tagihan.periode,
+                  statusBayar:
+                      widget.listTagihan[index].tagihan.isPaid.toString(),
+                  jumlah: (widget.listTagihan[index].tagihan.hargaAir +
+                      widget.listTagihan[index].tagihan.byPemeliharaan +
+                      widget.listTagihan[index].tagihan.byRetribusi +
+                      widget.listTagihan[index].tagihan.byAdministrasi +
+                      widget.listTagihan[index].tagihan.byLingkungan +
+                      widget.listTagihan[index].tagihan.byMaterai +
+                      widget.listTagihan[index].tagihan.byLainnya +
+                      widget.listTagihan[index].tagihan.byAngsuran +
+                      widget.listTagihan[index].denda),
+                  tagihan: widget.listTagihan[index],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  Widget buildDetailPel() => Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300,
+              offset: Offset(0.0, 1.0), //(x,y)
+              blurRadius: 6.0,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.format_list_numbered_rounded,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(
+                    'No Pel',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  widget.nopel,
+                  style: GoogleFonts.nunito(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.person,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(
+                    'Nama',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  nama,
+                  style: GoogleFonts.nunito(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.home,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(
+                    'Alamat',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  alamat,
+                  style: GoogleFonts.nunito(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.album_outlined,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(
+                    'Gol',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  gol,
+                  style: GoogleFonts.nunito(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.account_box_outlined,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(
+                    'Status',
+                    style: GoogleFonts.nunito(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  (status == '1') ? 'Aktif' : 'Tidak Aktif',
+                  style: GoogleFonts.nunito(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+          ],
+        ),
+      );
 
   Widget buildCardTagihan(
           {required String periode,

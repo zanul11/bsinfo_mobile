@@ -75,7 +75,7 @@ beritaCard(Size ukuranLayar) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Judul Berita Terkini',
+                        'Judul Berita',
                         style: GoogleFonts.poppins(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
@@ -88,7 +88,7 @@ beritaCard(Size ukuranLayar) {
                       ),
                       Expanded(
                         child: Text(
-                          'Bak berburu hewan di hutan, pemancing ini tak pakai pancingan.....',
+                          'Fitur ini masih dalam tahap pengembangan.....',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                           ),

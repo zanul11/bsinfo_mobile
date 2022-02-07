@@ -320,10 +320,6 @@ class _HomePageState extends State<HomePage> {
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     beritaCard(ukuranLayar),
-                    beritaCard(ukuranLayar),
-                    beritaCard(ukuranLayar),
-                    beritaCard(ukuranLayar),
-                    beritaCard(ukuranLayar),
                     SizedBox(
                       height: 40,
                     ),

@@ -6,7 +6,6 @@ import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:bsainfo_mobile/photoHero.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -281,7 +280,7 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
         pd.update(value: 1, msg: 'Kirim Data...');
         dios.Dio dio = dios.Dio();
         dio
-            .post("https://api.garagebit.xyz/api/uploadImage", data: data)
+            .post("https://api.pudam-bayuangga.id/api/uploadImage", data: data)
             .then((response) async {
           var res = json.decode(response.toString());
           if (response.statusCode == 200) {
