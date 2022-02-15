@@ -60,52 +60,68 @@ class _TagihanPageState extends State<TagihanPage> {
           alignment: Alignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextFormField(
-                controller: nopel,
-                keyboardType: TextInputType.number,
-                style: GoogleFonts.openSans(
-                  color: Colors.grey,
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Masukkan no pelanggan anda!';
-                  }
-                  return null;
-                },
-                onChanged: (v) {
-                  setState(() {
-                    if (v != '' && v.length > 5) {
-                      _tombomasuk = true;
-                    } else {
-                      _tombomasuk = false;
-                    }
-                  });
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(20.0),
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    borderSide: BorderSide(color: Colors.blue),
-                  ),
-                  hintText: 'Masukkan no pelanggan ',
-                  hintStyle: GoogleFonts.openSans(
-                    color: Colors.grey,
-                  ),
-                  labelStyle: GoogleFonts.openSans(
-                    color: Colors.black,
-                  ),
+              padding: MediaQuery.of(context).viewInsets,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: nopel,
+                      keyboardType: TextInputType.number,
+                      style: GoogleFonts.openSans(
+                        color: Colors.grey,
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Masukkan no pelanggan anda!';
+                        }
+                        return null;
+                      },
+                      onChanged: (v) {
+                        setState(() {
+                          if (v != '' && v.length > 5) {
+                            _tombomasuk = true;
+                          } else {
+                            _tombomasuk = false;
+                          }
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(20.0),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Colors.grey,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        hintText: 'Masukkan no pelanggan ',
+                        hintStyle: GoogleFonts.openSans(
+                          color: Colors.grey,
+                        ),
+                        labelStyle: GoogleFonts.openSans(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      '*Minimal 6 digit',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  ],
                 ),
               ),
             ),

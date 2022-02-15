@@ -228,6 +228,21 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                     '0335 422254',
                     style: TextStyle(fontSize: 14, height: 1.4),
                     textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'WhatsApp.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    '081133366999',
+                    style: TextStyle(fontSize: 14, height: 1.4),
+                    textAlign: TextAlign.center,
                   )
                 ],
               ),
