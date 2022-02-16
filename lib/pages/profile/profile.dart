@@ -134,6 +134,17 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                buildSocialMediaIcon(FontAwesomeIcons.whatsapp, () async {
+                  final url = 'whatsapp://send?phone=+6281133399666';
+                  // if (await canLaunch(url)) {
+                  await launch(url);
+                  // } else {
+                  //   print('cant launch');
+                  // }
+                }),
+                SizedBox(
+                  width: 12,
+                ),
                 buildSocialMediaIcon(FontAwesomeIcons.facebook, () async {
                   final url = 'https://www.facebook.com/pdam.probolinggokota';
                   // if (await canLaunch(url)) {
@@ -163,9 +174,14 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                   // }
                   // print('tel');
                 }),
-                SizedBox(
-                  width: 12,
-                ),
+              ],
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 buildSocialMediaIcon(Icons.email, () async {
                   final url =
                       'mailto:pdam.probolinggo@yahoo.co.id?${Uri.encodeFull('Pertanyaan')}&body=${Uri.encodeFull('Hallo PDAM KOta Probolinggo..')}';
@@ -240,7 +256,7 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                     ),
                   ),
                   Text(
-                    '081133366999',
+                    '081133399666',
                     style: TextStyle(fontSize: 14, height: 1.4),
                     textAlign: TextAlign.center,
                   )

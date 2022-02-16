@@ -84,7 +84,9 @@ Padding tagihanWidget(
                           Navigator.push(context,
                               MaterialPageRoute(builder: (ctx) {
                             return TagihanRiwayat(
-                                nopel: nopel, listTagihan: value.resultTagihan);
+                                nopel: nopel,
+                                listTagihan:
+                                    value.resultTagihan.reversed.toList());
                           }));
                         }).catchError((onError) {
                           Fluttertoast.showToast(

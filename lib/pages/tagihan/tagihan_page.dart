@@ -118,7 +118,7 @@ class _TagihanPageState extends State<TagihanPage> {
                       height: 5,
                     ),
                     Text(
-                      '*Minimal 6 digit',
+                      '*Minimal 6 digit (Contoh : 000123)',
                       style: TextStyle(color: Colors.red),
                     )
                   ],
@@ -180,7 +180,9 @@ class _TagihanPageState extends State<TagihanPage> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (ctx) {
                                         return TagihanRiwayat(
-                                          listTagihan: value.resultTagihan,
+                                          listTagihan: value
+                                              .resultTagihan.reversed
+                                              .toList(),
                                           nopel: nopel.text.trim(),
                                         );
                                       }));

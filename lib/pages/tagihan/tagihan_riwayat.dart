@@ -36,16 +36,18 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
       gol = value.resultDetailPelanggan[0].kodeGolongan;
       status = value.resultDetailPelanggan[0].status.toString();
       widget.listTagihan.forEach((element) {
-        var tmp = (element.tagihan.hargaAir +
-            element.tagihan.byPemeliharaan +
-            element.tagihan.byRetribusi +
-            element.tagihan.byAdministrasi +
-            element.tagihan.byLingkungan +
-            element.tagihan.byMaterai +
-            element.tagihan.byLainnya +
-            element.tagihan.byAngsuran +
-            element.denda);
-        totalBayar += tmp;
+        if (element.tagihan.isPaid == 0) {
+          var tmp = (element.tagihan.hargaAir +
+              element.tagihan.byPemeliharaan +
+              element.tagihan.byRetribusi +
+              element.tagihan.byAdministrasi +
+              element.tagihan.byLingkungan +
+              element.tagihan.byMaterai +
+              element.tagihan.byLainnya +
+              element.tagihan.byAngsuran +
+              element.denda);
+          totalBayar += tmp;
+        }
       });
       setState(() {});
     });
@@ -161,7 +163,7 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                     Expanded(
                       child: Text(
-                        'Jumlah rekening',
+                        'Jumlah Rekening Belum Terbayar',
                         style: GoogleFonts.nunito(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -169,7 +171,10 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                       ),
                     ),
                     Text(
-                      widget.listTagihan.length.toString(),
+                      widget.listTagihan
+                          .where((element) => element.tagihan.isPaid == 0)
+                          .length
+                          .toString(),
                       style: GoogleFonts.nunito(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
