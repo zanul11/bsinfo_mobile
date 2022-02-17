@@ -185,6 +185,22 @@ class Api {
     }
   }
 
+  Future<Map<String, dynamic>> resetPassword({
+    required String nohp,
+    required String token,
+  }) async {
+    final String _url = '$apiUrl/resetPassword';
+    final _response = await client.post(Uri.parse(_url), body: {
+      "nohp": nohp,
+      "token": token,
+    });
+    if (_response.statusCode == 200) {
+      return json.decode(_response.body);
+    } else {
+      throw Exception('${json.decode(_response.body)}');
+    }
+  }
+
   Future<BacaMandiriModel> getBacaMandiri({required String nopel}) async {
     final String _url = '$apiUrl/getBacaMandiri/$nopel';
     final _response = await client.get(Uri.parse(_url));

@@ -308,9 +308,8 @@ class _LoginState extends State<Login> {
                             height: 10.0,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text('Lupa'),
                               InkWell(
                                 onTap: () {
                                   Navigator.push(context,
@@ -319,7 +318,7 @@ class _LoginState extends State<Login> {
                                   }));
                                 },
                                 child: Text(
-                                  ' Password',
+                                  'Lupa Password?',
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),

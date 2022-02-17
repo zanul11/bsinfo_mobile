@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +26,8 @@ class _ForgetPageState extends State<ForgetPage> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Widget _buildNoHp() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,6 +46,15 @@ class _ForgetPageState extends State<ForgetPage> {
               return 'Masukkan no hp!';
             }
             return null;
+          },
+          onChanged: (v) {
+            setState(() {
+              if (noHp.text != '' && v != '') {
+                _tombomasuk = true;
+              } else {
+                _tombomasuk = false;
+              }
+            });
           },
           decoration: InputDecoration(
               border: InputBorder.none,
@@ -101,9 +114,74 @@ class _ForgetPageState extends State<ForgetPage> {
                   final result = await InternetAddress.lookup('google.com');
                   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                     if (formKey.currentState!.validate()) {
-                      setState(() {
-                        _loading = true;
-                      });
+                      showDialog(
+                        context: _scaffoldKey.currentContext!,
+                        builder: (BuildContext dialogContex) {
+                          // return object of type Dialog
+                          return AlertDialog(
+                            title: const Text("Konfirmasi"),
+                            content: const Text("Yakin akan RESET PASSWORD?"),
+                            actions: <Widget>[
+                              // usually buttons at the bottom of the dialog
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    child: const Text(
+                                      "TIDAK",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(dialogContex).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text("IYA"),
+                                    onPressed: () async {
+                                      Navigator.pop(dialogContex);
+                                      setState(() {
+                                        _loading = true;
+                                      });
+                                      FirebaseMessaging.instance
+                                          .getToken()
+                                          .then((token) {
+                                        Api()
+                                            .resetPassword(
+                                                nohp: noHp.text,
+                                                token: token.toString())
+                                            .then((value) {
+                                          if (value['status']) {
+                                            // setState(() {
+                                            //   _loading = false;
+                                            // });
+                                            Navigator.pop(context);
+                                            Fluttertoast.showToast(
+                                              msg: 'Berhasil Reset Password!',
+                                              backgroundColor: Colors.red,
+                                              toastLength: Toast.LENGTH_LONG,
+                                              textColor: whiteColor,
+                                            );
+                                          } else {
+                                            Fluttertoast.showToast(
+                                              msg: 'No Hp Tidak Ditemukan!',
+                                              backgroundColor: Colors.red,
+                                              toastLength: Toast.LENGTH_LONG,
+                                              textColor: whiteColor,
+                                            );
+                                            setState(() {
+                                              _loading = false;
+                                            });
+                                          }
+                                        });
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   } else {
                     Fluttertoast.showToast(
@@ -144,6 +222,7 @@ class _ForgetPageState extends State<ForgetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: colorTagihan,
