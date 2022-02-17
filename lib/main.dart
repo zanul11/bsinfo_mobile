@@ -1,13 +1,11 @@
 import 'dart:io';
 
-import 'package:bsainfo_mobile/pages/bacamandiri/bacamandiri_form.dart';
 import 'package:bsainfo_mobile/pages/bacamandiri/bacamandiri_page.dart';
 import 'package:bsainfo_mobile/pages/home/home_page.dart';
 import 'package:bsainfo_mobile/pages/login/login_page.dart';
 import 'package:bsainfo_mobile/pages/login/profile.dart';
 import 'package:bsainfo_mobile/pages/login/register_page.dart';
 import 'package:bsainfo_mobile/pages/pembayaran/pembayaran_page.dart';
-import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_form.dart';
 import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_page.dart';
 import 'package:bsainfo_mobile/pages/profile/profile.dart';
 import 'package:bsainfo_mobile/pages/splash_page.dart';
@@ -87,9 +85,9 @@ class MyApp extends StatelessWidget {
         // '/tagihan-riwayat': (context) => TagihanRiwayat(),
         // '/tagihan-detail': (context) => TagihanDetail(),
         '/pengaduan': (context) => PengaduanPage(),
-        '/pengaduan-form': (context) => PengaduanForm(),
+        // '/pengaduan-form': (context) => PengaduanForm(),
         '/bacamandiri': (context) => BacaMandiriPage(),
-        '/bacamandiri-form': (context) => BacaMandiriForm(),
+        // '/bacamandiri-form': (context) => BacaMandiriForm(),
         '/profile-perusahaan': (contex) => ProfilePerusahaanPage(),
         '/pembayaran': (context) => PembayaranPage(),
       },

@@ -4,6 +4,7 @@ import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/models/detail_pelanggan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
+import 'package:bsainfo_mobile/pages/login/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -310,47 +311,60 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('Informasi Pengguna'),
         actions: [
           IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    // return object of type Dialog
-                    return AlertDialog(
-                      title: const Text("Konfirmasi"),
-                      content: const Text("Yakin akan log out?"),
-                      actions: <Widget>[
-                        // usually buttons at the bottom of the dialog
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              child: const Text(
-                                "TIDAK",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            TextButton(
-                              child: const Text("IYA"),
-                              onPressed: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.remove('nama');
-                                await prefs.remove('nohp');
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/', (Route<dynamic> route) => false);
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                return EditProfilePgae(
+                  nama: nama,
+                  noHp: nohp,
                 );
-              },
-              icon: Icon(Icons.logout_rounded))
+              }));
+            },
+            tooltip: 'Edit User',
+            icon: Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  // return object of type Dialog
+                  return AlertDialog(
+                    title: const Text("Konfirmasi"),
+                    content: const Text("Yakin akan log out?"),
+                    actions: <Widget>[
+                      // usually buttons at the bottom of the dialog
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            child: const Text(
+                              "TIDAK",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text("IYA"),
+                            onPressed: () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.remove('nama');
+                              await prefs.remove('nohp');
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  '/', (Route<dynamic> route) => false);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.logout_rounded),
+          ),
         ],
       ),
       backgroundColor: Colors.grey[100],

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/models/detail_pelanggan_model.dart';
 import 'package:bsainfo_mobile/models/jenis_pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -11,6 +12,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengaduanForm extends StatefulWidget {
+  final String selectedNo;
+  PengaduanForm({required this.selectedNo});
   @override
   _PengaduanFormState createState() => _PengaduanFormState();
 }
@@ -20,6 +23,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
   List<Result> listPelanggan = List.empty();
   String selectedNo = '';
   String namaUser = '', nohpUser = '';
+  List<ResultDetailPelanggan> detailPelanggan = [];
   getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -97,9 +101,25 @@ class _PengaduanFormState extends State<PengaduanForm> {
     );
   }
 
+  getAlamat({required String nopel}) {
+    print(nopel);
+    api.detailPelanggan(nopel: nopel).then((value) {
+      detailPelanggan = value.resultDetailPelanggan;
+      setState(() {
+        alamat.text = value.resultDetailPelanggan[0].alamat;
+      });
+    }).catchError((onError) {
+      print(onError.message.toString());
+      setState(() {
+        detailPelanggan = List.empty();
+      });
+    });
+  }
+
   @override
   void initState() {
     getUser();
+    getAlamat(nopel: widget.selectedNo);
     getDataSpesialis();
     super.initState();
   }
@@ -143,6 +163,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                       prefs.setString(
                           'selectedNoPel', listPelanggan[index].noPelanggan);
                     });
+                    getAlamat(nopel: listPelanggan[index].noPelanggan);
                     Navigator.pop(context);
                   },
                 ),
@@ -212,10 +233,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
       FocusScope.of(context).requestFocus(new FocusNode());
       if (_currentStep == 0) {
         if (menu == 0) {
-          if (noIdentitas.text == '' || alamat.text == '') {
-            showAlertDialog(context, 'Field Tidak boleh kosong');
-          } else
-            setState(() => _currentStep += 1);
+          setState(() => _currentStep += 1);
         } else {
           if (noIdentitas.text == '' ||
               alamat.text == '' ||
@@ -266,7 +284,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                             pelangganId: (menu == 0) ? selectedNo : '',
                             nama: (menu == 0) ? namaUser : nama.text,
                             alamat: alamat.text,
-                            noIdentitas: noIdentitas.text,
+                            noIdentitas: (menu == 0) ? '-' : noIdentitas.text,
                             noTlp: (menu == 0) ? nohpUser : noTlp.text,
                             jenisAduan: _selectedJenisPengaduan.id.toString(),
                             keterangan: ket.text)
@@ -339,6 +357,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                             onTap: () {
                               setState(() {
                                 menu = 0;
+                                alamat.text = detailPelanggan[0].alamat;
                               });
                             },
                             child: Container(
@@ -371,6 +390,7 @@ class _PengaduanFormState extends State<PengaduanForm> {
                             onTap: () {
                               setState(() {
                                 menu = 1;
+                                alamat.text = '';
                               });
                             },
                             child: Container(
@@ -537,38 +557,46 @@ class _PengaduanFormState extends State<PengaduanForm> {
                                       ),
                                     ),
                                   ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            TextFormField(
-                              style: GoogleFonts.openSans(
-                                fontSize: 14.0,
-                              ),
-                              controller: noIdentitas,
-                              decoration: InputDecoration(
-                                labelText: 'No Identitas',
-                                labelStyle: GoogleFonts.openSans(
-                                  fontSize: 10.0,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blue,
+                            (menu == 0)
+                                ? Container()
+                                : SizedBox(
+                                    height: 10.0,
                                   ),
-                                ),
-                                hintText: 'No Identitas',
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1.0,
+                            (menu == 0)
+                                ? Container()
+                                : TextFormField(
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14.0,
+                                    ),
+                                    controller: noIdentitas,
+                                    decoration: InputDecoration(
+                                      labelText: 'No Identitas',
+                                      labelStyle: GoogleFonts.openSans(
+                                        fontSize: 10.0,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      hintText: 'No Identitas',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
+                            (menu == 0)
+                                ? Container()
+                                : SizedBox(
+                                    height: 10.0,
+                                  ),
                             (menu == 0)
                                 ? Container()
                                 : TextFormField(
@@ -600,9 +628,11 @@ class _PengaduanFormState extends State<PengaduanForm> {
                                       ),
                                     ),
                                   ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
+                            (menu == 0)
+                                ? Container()
+                                : SizedBox(
+                                    height: 10.0,
+                                  ),
                             TextFormField(
                               style: GoogleFonts.openSans(
                                 fontSize: 14.0,

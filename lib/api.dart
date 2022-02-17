@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bsainfo_mobile/models/bacamandiri_model.dart';
 import 'package:bsainfo_mobile/models/cekTagihan_model.dart';
 import 'package:bsainfo_mobile/models/detail_pelanggan_model.dart';
+import 'package:bsainfo_mobile/models/historibacameter_model.dart';
 import 'package:bsainfo_mobile/models/jenis_pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/login_model.dart';
 import 'package:bsainfo_mobile/models/pengaduan_model.dart';
@@ -29,6 +30,25 @@ class Api {
 
     if (_response.statusCode == 200) {
       return loginModelFromJson(_response.body);
+    } else {
+      throw Exception('Server Error');
+    }
+  }
+
+  Future<Map<String, dynamic>> doUpdateProfile({
+    required String nohp,
+    required String nama,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String _url = '$apiUrl/doUpdateProfile';
+    final _response = await client.post(Uri.parse(_url), body: {
+      "nohp": nohp,
+      "nama": nama,
+      "nohp_old": '${prefs.getString('nohp')}',
+    });
+
+    if (_response.statusCode == 200) {
+      return json.decode(_response.body);
     } else {
       throw Exception('Server Error');
     }
@@ -182,6 +202,44 @@ class Api {
       return cekTagihanFromJson(_response.body);
     } else {
       throw Exception('Server Error');
+    }
+  }
+
+  Future<Map<String, dynamic>> getConfig() async {
+    final response = await client.get(
+      Uri.parse("https://api.pudam-bayuangga.id/penagihan/getConfig"),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      var tmp = json.decode(response.body);
+      throw Exception(tmp['message']);
+    }
+  }
+
+  Future<HistroriBacameterModel> getHistoriBacameter(
+      {required String nopel}) async {
+    final response = await client.get(
+      Uri.parse("$apiUrl/getHistori/$nopel"),
+    );
+    if (response.statusCode == 200) {
+      return histroriBacameterModelFromJson(response.body);
+    } else {
+      var tmp = json.decode(response.body);
+      throw Exception(tmp['message']);
+    }
+  }
+
+  Future<Map<String, dynamic>> cekStatusPelanggan(
+      {required String nopel}) async {
+    final response = await client.get(
+      Uri.parse("$apiUrl/cekStatusPelanggan/$nopel"),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      var tmp = json.decode(response.body);
+      throw Exception(tmp['message']);
     }
   }
 

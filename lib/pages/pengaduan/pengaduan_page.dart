@@ -3,6 +3,7 @@ import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/koneksi.dart';
 import 'package:bsainfo_mobile/models/pengaduan_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
+import 'package:bsainfo_mobile/pages/pengaduan/pengaduan_form.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -407,8 +408,14 @@ class _PengaduanPageState extends State<PengaduanPage> {
                       style: TextButton.styleFrom(
                         backgroundColor: colorTagihan,
                       ),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/pengaduan-form'),
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (ctx) {
+                          return PengaduanForm(
+                            selectedNo: selectedNo,
+                          );
+                        }));
+                      },
                       child: Text(
                         'Tambah Pengaduan',
                         style: TextStyle(color: Colors.white),

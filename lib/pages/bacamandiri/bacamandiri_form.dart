@@ -17,6 +17,8 @@ import 'package:dio/dio.dart' as dios;
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class BacaMandiriForm extends StatefulWidget {
+  final String nopel;
+  BacaMandiriForm({required this.nopel});
   @override
   _BacaMandiriFormState createState() => _BacaMandiriFormState();
 }
@@ -28,7 +30,9 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
   String namaUser = '', nohpUser = '';
   File _image = File('');
   String _nmImage = '';
-
+  String stanLalu1 = '';
+  String stanLalu2 = '';
+  String stanLalu3 = '';
   Future getImage(int type) async {
     var image;
     if (type == 0)
@@ -121,10 +125,25 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
   final TextEditingController noIdPel = TextEditingController();
   final TextEditingController standMeter = TextEditingController();
   final TextEditingController ket = TextEditingController();
+  // HistroriBacameterModel histori = empety ;
+
+  getHistori({required String no}) {
+    Api().getHistoriBacameter(nopel: no).then((value) {
+      setState(() {
+        stanLalu1 =
+            "${value.resultHistori.stanLalu} (${value.resultHistori.pakai1BlnLalu} m\u00B3)";
+        stanLalu2 =
+            "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu} (${value.resultHistori.pakai2BlnLalu} m\u00B3)";
+        stanLalu3 =
+            "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu - value.resultHistori.pakai2BlnLalu} (${value.resultHistori.pakai3BlnLalu} m\u00B3)";
+      });
+    }).catchError((onError) {});
+  }
 
   @override
   void initState() {
     getUser();
+    getHistori(no: widget.nopel);
     super.initState();
   }
 
@@ -157,15 +176,34 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
                   title: Text(listPelanggan[index].noPelanggan),
                   subtitle: Text(listPelanggan[index].pelangganDetail.nama),
                   onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    setState(() {
-                      selectedNo = listPelanggan[index].noPelanggan;
+                    Api()
+                        .cekStatusPelanggan(
+                            nopel: listPelanggan[index].noPelanggan)
+                        .then((value) async {
+                      if (value['status']) {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        setState(() {
+                          selectedNo = listPelanggan[index].noPelanggan;
 
-                      prefs.setString(
-                          'selectedNoPel', listPelanggan[index].noPelanggan);
+                          prefs.setString('selectedNoPel',
+                              listPelanggan[index].noPelanggan);
+                        });
+                        getHistori(no: listPelanggan[index].noPelanggan);
+                        Navigator.pop(context);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg:
+                                "Bacameter Mandiri Hanya Bisa Dilakukan untuk Pelanggan Aktif, Pelanggan dengan nomor ${listPelanggan[index].noPelanggan} merupakan pelanggan Non Aktif!",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        Navigator.pop(context);
+                      }
                     });
-                    Navigator.pop(context);
                   },
                 ),
               )
@@ -429,77 +467,77 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                menu = 0;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(13),
-                              margin: EdgeInsets.only(right: 7),
-                              decoration: BoxDecoration(
-                                color: (menu == 0)
-                                    ? Colors.green.shade500
-                                    : Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'NO TERDAFTAR',
-                                  style: GoogleFonts.nunito(
-                                      fontSize: 12,
-                                      color: (menu == 0)
-                                          ? Colors.white
-                                          : Colors.grey),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                menu = 1;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(13),
-                              margin: EdgeInsets.only(right: 5),
-                              decoration: BoxDecoration(
-                                color: (menu == 1)
-                                    ? Colors.green.shade500
-                                    : Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'INPUT MANUAL',
-                                  style: GoogleFonts.nunito(
-                                      fontSize: 12,
-                                      color: (menu == 1)
-                                          ? Colors.white
-                                          : Colors.grey),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: InkWell(
+                        //     onTap: () {
+                        //       setState(() {
+                        //         menu = 0;
+                        //       });
+                        //     },
+                        //     child: Container(
+                        //       padding: EdgeInsets.all(13),
+                        //       margin: EdgeInsets.only(right: 7),
+                        //       decoration: BoxDecoration(
+                        //         color: (menu == 0)
+                        //             ? Colors.green.shade500
+                        //             : Colors.white,
+                        //         borderRadius: BorderRadius.all(
+                        //           Radius.circular(10),
+                        //         ),
+                        //         border: Border.all(color: Colors.grey),
+                        //       ),
+                        //       child: Center(
+                        //         child: Text(
+                        //           'NO TERDAFTAR',
+                        //           style: GoogleFonts.nunito(
+                        //               fontSize: 12,
+                        //               color: (menu == 0)
+                        //                   ? Colors.white
+                        //                   : Colors.grey),
+                        //           textAlign: TextAlign.center,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // Expanded(
+                        //   child: InkWell(
+                        //     onTap: () {
+                        //       setState(() {
+                        //         menu = 1;
+                        //       });
+                        //     },
+                        //     child: Container(
+                        //       padding: EdgeInsets.all(13),
+                        //       margin: EdgeInsets.only(right: 5),
+                        //       decoration: BoxDecoration(
+                        //         color: (menu == 1)
+                        //             ? Colors.green.shade500
+                        //             : Colors.white,
+                        //         border: Border.all(color: Colors.grey),
+                        //         borderRadius: BorderRadius.all(
+                        //           Radius.circular(10),
+                        //         ),
+                        //       ),
+                        //       child: Center(
+                        //         child: Text(
+                        //           'INPUT MANUAL',
+                        //           style: GoogleFonts.nunito(
+                        //               fontSize: 12,
+                        //               color: (menu == 1)
+                        //                   ? Colors.white
+                        //                   : Colors.grey),
+                        //           textAlign: TextAlign.center,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
+                    // SizedBox(
+                    //   height: 15,
+                    // ),
                     (menu == 1)
                         ? Container()
                         : GestureDetector(
@@ -570,6 +608,39 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
                               ),
                             ),
                           ),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        'Histori Pemakaian 3 Bulan Terakhir',
+                        style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          stanLalu1,
+                          style: GoogleFonts.nunito(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          stanLalu2,
+                          style: GoogleFonts.nunito(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          stanLalu3,
+                          style: GoogleFonts.nunito(
+                            fontSize: 15,
+                          ),
+                        )
+                      ],
+                    )
                   ],
                 ),
               ),

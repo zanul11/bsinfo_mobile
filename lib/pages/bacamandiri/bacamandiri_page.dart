@@ -3,6 +3,7 @@ import 'package:bsainfo_mobile/constant/color_constant.dart';
 import 'package:bsainfo_mobile/koneksi.dart';
 import 'package:bsainfo_mobile/models/bacamandiri_model.dart';
 import 'package:bsainfo_mobile/models/user_pelanggan_model.dart';
+import 'package:bsainfo_mobile/pages/bacamandiri/bacamandiri_form.dart';
 import 'package:bsainfo_mobile/photoHero.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -494,8 +495,47 @@ class _BacaMandiriPageState extends State<BacaMandiriPage> {
                       style: TextButton.styleFrom(
                         backgroundColor: colorTagihan,
                       ),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/bacamandiri-form'),
+                      onPressed: () {
+                        DateTime now = DateTime.now();
+                        Api().getConfig().then((value) {
+                          if (value['result']['tgl_batas_bm'] < now.day)
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Bacameter Mandiri Hanya Bisa Dilakukan sebelum tgl ${value['result']['tgl_batas_bm']} setiap bulannya!",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          else {
+                            Api()
+                                .cekStatusPelanggan(nopel: selectedNo)
+                                .then((value) async {
+                              if (value['status']) {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (ctx) {
+                                  return BacaMandiriForm(
+                                    nopel: selectedNo,
+                                  );
+                                }));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        "Bacameter Mandiri Hanya Bisa Dilakukan untuk Pelanggan Aktif, Pelanggan dengan nomor $selectedNo merupakan pelanggan Non Aktif!",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                                Navigator.pop(context);
+                              }
+                            });
+                          }
+                        });
+                        // Navigator.pushNamed(context, '/bacamandiri-form');
+                      },
                       child: Text(
                         'Baca Mandiri',
                         style: TextStyle(color: Colors.white),

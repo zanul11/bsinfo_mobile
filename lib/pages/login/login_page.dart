@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/pages/login/forget_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -303,6 +304,27 @@ class _LoginState extends State<Login> {
                             height: 10.0,
                           ),
                           _buildPasswordTF(),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Lupa'),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (ctx) {
+                                    return ForgetPage();
+                                  }));
+                                },
+                                child: Text(
+                                  ' Password',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
                           (_loading)
                               ? Center(
                                   child: CircularProgressIndicator(),

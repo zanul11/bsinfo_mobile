@@ -164,7 +164,7 @@ class _TagihanPageState extends State<TagihanPage> {
                                       .then((value) {
                                     if (!value.status) {
                                       Fluttertoast.showToast(
-                                        msg: 'Tagihan Tidak Ditemukan!',
+                                        msg: value.message.toString(),
                                         backgroundColor: Colors.red,
                                         textColor: whiteColor,
                                       );
