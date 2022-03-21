@@ -168,7 +168,7 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                   width: 12,
                 ),
                 buildSocialMediaIcon(FontAwesomeIcons.phone, () async {
-                  final url = 'tel:0335422254';
+                  final url = 'tel:0335427272';
                   // if (await canLaunch(url)) {
                   await launch(url);
                   // }
@@ -241,7 +241,7 @@ class _ProfilePerusahaanPageState extends State<ProfilePerusahaanPage> {
                     ),
                   ),
                   Text(
-                    '0335 422254',
+                    '0335 427272',
                     style: TextStyle(fontSize: 14, height: 1.4),
                     textAlign: TextAlign.center,
                   ),

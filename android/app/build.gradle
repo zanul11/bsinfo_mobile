@@ -43,7 +43,7 @@ android {
         applicationId "com.bsainfo_probo"
         minSdkVersion 20
         targetSdkVersion 30
-        versionCode 3
+        versionCode 6
         versionName flutterVersionName
         multiDexEnabled true
     }

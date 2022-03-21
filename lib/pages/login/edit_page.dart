@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bsainfo_mobile/api.dart';
 import 'package:bsainfo_mobile/constant/color_constant.dart';
+import 'package:bsainfo_mobile/pages/login/ganti_password.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -340,6 +341,23 @@ class _EditProfilePgaeState extends State<EditProfilePgae> {
                     _buildNoHp(),
                     SizedBox(
                       height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (ctx) {
+                              return GantiPassPage();
+                            }));
+                          },
+                          child: Text(
+                            'Ganti Password?',
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                      ],
                     ),
                     // _buildPasswordTF(),
                     (_loading)

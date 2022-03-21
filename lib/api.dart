@@ -201,6 +201,24 @@ class Api {
     }
   }
 
+  Future<Map<String, dynamic>> gantiPassword({
+    required String oldPass,
+    required String newPass,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String _url = '$apiUrl/gantiPassword';
+    final _response = await client.post(Uri.parse(_url), body: {
+      "nohp": '${prefs.getString('nohp')}',
+      "old_password": oldPass,
+      "new_password": newPass,
+    });
+    if (_response.statusCode == 200) {
+      return json.decode(_response.body);
+    } else {
+      throw Exception('${json.decode(_response.body)}');
+    }
+  }
+
   Future<BacaMandiriModel> getBacaMandiri({required String nopel}) async {
     final String _url = '$apiUrl/getBacaMandiri/$nopel';
     final _response = await client.get(Uri.parse(_url));

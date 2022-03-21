@@ -180,9 +180,7 @@ class _TagihanPageState extends State<TagihanPage> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (ctx) {
                                         return TagihanRiwayat(
-                                          listTagihan: value
-                                              .resultTagihan.reversed
-                                              .toList(),
+                                          listTagihan: value.resultTagihan,
                                           nopel: nopel.text.trim(),
                                         );
                                       }));

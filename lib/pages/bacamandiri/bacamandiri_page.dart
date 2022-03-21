@@ -342,7 +342,11 @@ class _BacaMandiriPageState extends State<BacaMandiriPage> {
                                                                   return PhotoHeroNetwork(
                                                                     photo: listBacaMandiri[
                                                                             index]
-                                                                        .foto1,
+                                                                        .foto1
+                                                                        .toString()
+                                                                        .replaceAll(
+                                                                            'http://api.pudam.net',
+                                                                            'https://api.pudam-bayuangga.id'),
                                                                   );
                                                                 }));
                                                               },
@@ -376,10 +380,13 @@ class _BacaMandiriPageState extends State<BacaMandiriPage> {
                                                                 ),
                                                                 child:
                                                                     CachedNetworkImage(
-                                                                  imageUrl:
-                                                                      listBacaMandiri[
-                                                                              index]
-                                                                          .foto1,
+                                                                  imageUrl: listBacaMandiri[
+                                                                          index]
+                                                                      .foto1
+                                                                      .toString()
+                                                                      .replaceAll(
+                                                                          'http://api.pudam.net',
+                                                                          'https://api.pudam-bayuangga.id'),
                                                                   placeholder: (context,
                                                                           url) =>
                                                                       Container(

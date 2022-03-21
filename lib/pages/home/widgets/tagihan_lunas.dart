@@ -97,8 +97,7 @@ Padding tagihanLunas(Size ukuranLayar, String nopel, BuildContext context) {
                               MaterialPageRoute(builder: (ctx) {
                             return TagihanRiwayat(
                               nopel: nopel,
-                              listTagihan:
-                                  value.resultTagihan.reversed.toList(),
+                              listTagihan: value.resultTagihan,
                             );
                           }));
                         }).catchError((onError) {

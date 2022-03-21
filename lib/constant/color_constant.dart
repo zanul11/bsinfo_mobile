@@ -9,3 +9,18 @@ Color whiteColor = Colors.white;
 Color blackColor = Colors.black;
 Color lightPrimaryColor = primaryColor.withOpacity(0.2);
 Color darkBlueColor = Color(0xFF151C48);
+var namaBulan = [
+  '',
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember'
+];

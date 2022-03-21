@@ -33,6 +33,30 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
   String stanLalu1 = '';
   String stanLalu2 = '';
   String stanLalu3 = '';
+  int bln1 = 0;
+  int bln2 = 0;
+  int bln3 = 0;
+
+  getBulanHistori() {
+    if (DateTime.now().month >= 4) {
+      bln1 = DateTime.now().month - 1;
+      bln2 = DateTime.now().month - 2;
+      bln3 = DateTime.now().month - 3;
+    } else if (DateTime.now().month == 1) {
+      bln1 = 12;
+      bln2 = 11;
+      bln3 = 10;
+    } else if (DateTime.now().month == 2) {
+      bln1 = 1;
+      bln2 = 12;
+      bln3 = 11;
+    } else {
+      bln1 = 2;
+      bln2 = 1;
+      bln3 = 12;
+    }
+  }
+
   Future getImage(int type) async {
     var image;
     if (type == 0)
@@ -130,12 +154,15 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
   getHistori({required String no}) {
     Api().getHistoriBacameter(nopel: no).then((value) {
       setState(() {
-        stanLalu1 =
-            "${value.resultHistori.stanLalu} (${value.resultHistori.pakai1BlnLalu} m\u00B3)";
-        stanLalu2 =
-            "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu} (${value.resultHistori.pakai2BlnLalu} m\u00B3)";
-        stanLalu3 =
-            "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu - value.resultHistori.pakai2BlnLalu} (${value.resultHistori.pakai3BlnLalu} m\u00B3)";
+        // stanLalu1 =
+        //     "${value.resultHistori.stanLalu} (${value.resultHistori.pakai1BlnLalu} m\u00B3)";
+        // stanLalu2 =
+        //     "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu} (${value.resultHistori.pakai2BlnLalu} m\u00B3)";
+        // stanLalu3 =
+        //     "${value.resultHistori.stanLalu - value.resultHistori.pakai1BlnLalu - value.resultHistori.pakai2BlnLalu} (${value.resultHistori.pakai3BlnLalu} m\u00B3)";
+        stanLalu1 = "${value.resultHistori.pakai1BlnLalu} m\u00B3";
+        stanLalu2 = "${value.resultHistori.pakai2BlnLalu} m\u00B3";
+        stanLalu3 = "${value.resultHistori.pakai3BlnLalu} m\u00B3";
       });
     }).catchError((onError) {});
   }
@@ -144,6 +171,7 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
   void initState() {
     getUser();
     getHistori(no: widget.nopel);
+    getBulanHistori();
     super.initState();
   }
 
@@ -608,6 +636,7 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
                               ),
                             ),
                           ),
+                    Divider(),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: Text(
@@ -618,29 +647,61 @@ class _BacaMandiriFormState extends State<BacaMandiriForm> {
                         ),
                       ),
                     ),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          stanLalu1,
-                          style: GoogleFonts.nunito(
-                            fontSize: 15,
-                          ),
+                        Column(
+                          children: [
+                            Text(
+                              namaBulan[bln1],
+                              style: GoogleFonts.nunito(
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              stanLalu1,
+                              style: GoogleFonts.nunito(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          stanLalu2,
-                          style: GoogleFonts.nunito(
-                            fontSize: 15,
-                          ),
+                        Column(
+                          children: [
+                            Text(
+                              namaBulan[bln2],
+                              style: GoogleFonts.nunito(
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              stanLalu2,
+                              style: GoogleFonts.nunito(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          stanLalu3,
-                          style: GoogleFonts.nunito(
-                            fontSize: 15,
-                          ),
-                        )
+                        Column(
+                          children: [
+                            Text(
+                              namaBulan[bln3],
+                              style: GoogleFonts.nunito(
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              stanLalu3,
+                              style: GoogleFonts.nunito(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),

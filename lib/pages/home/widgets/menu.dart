@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-menuWidget(Size ukuranLayar, BuildContext context) {
+menuWidget(Size ukuranLayar, BuildContext context, bool cekLogin) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 15.0),
     child: Column(
@@ -93,7 +93,17 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     Radius.circular(10),
                   ),
                   child: InkWell(
-                    onTap: () => Navigator.pushNamed(context, '/pengaduan'),
+                    onTap: () {
+                      if (cekLogin)
+                        Navigator.pushNamed(context, '/pengaduan');
+                      else
+                        Fluttertoast.showToast(
+                          msg: 'Silhkan Login untuk Mengakses Fitur ini!',
+                          backgroundColor: Colors.orange,
+                          toastLength: Toast.LENGTH_LONG,
+                          textColor: whiteColor,
+                        );
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(7.0),
                       child: Column(
@@ -194,7 +204,17 @@ menuWidget(Size ukuranLayar, BuildContext context) {
                     Radius.circular(10),
                   ),
                   child: InkWell(
-                    onTap: () => Navigator.pushNamed(context, '/bacamandiri'),
+                    onTap: () {
+                      if (cekLogin)
+                        Navigator.pushNamed(context, '/bacamandiri');
+                      else
+                        Fluttertoast.showToast(
+                          msg: 'Silhkan Login untuk Mengakses Fitur ini!',
+                          backgroundColor: Colors.orange,
+                          toastLength: Toast.LENGTH_LONG,
+                          textColor: whiteColor,
+                        );
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(7.0),
                       child: Column(

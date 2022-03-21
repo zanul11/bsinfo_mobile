@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                               ? tagihanWidget(ukuranLayar, tagihanRekening,
                                   selectedNo, context)
                               : tagihanLunas(ukuranLayar, selectedNo, context)),
-              menuWidget(ukuranLayar, context),
+              menuWidget(ukuranLayar, context, cekLogin),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Text(
