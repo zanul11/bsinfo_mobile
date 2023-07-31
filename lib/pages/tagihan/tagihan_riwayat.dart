@@ -131,97 +131,112 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade300,
-                  offset: Offset(0.0, 1.0), //(x,y)
-                  blurRadius: 6.0,
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.confirmation_number_outlined,
-                      color: Colors.white,
+          (widget.listTagihan
+                      .where((element) => element.tagihan.isPaid == 0)
+                      .length ==
+                  0)
+              ? SizedBox()
+              : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Jumlah Rekening Belum Terbayar',
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        offset: Offset(0.0, 1.0), //(x,y)
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.confirmation_number_outlined,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Jumlah Rekening Belum Terbayar',
+                              style: GoogleFonts.nunito(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            widget.listTagihan
+                                .where((element) => element.tagihan.isPaid == 0)
+                                .length
+                                .toString(),
+                            style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.request_page_outlined,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Total',
+                              style: GoogleFonts.nunito(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Rp. ${moneyFormat('$totalBayar')}',
+                            style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Total pembayaran belum termasuk biaya admin untuk pembayaran melalui PPOB atau online',
                         style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.height / 80,
                         ),
-                      ),
-                    ),
-                    Text(
-                      widget.listTagihan
-                          .where((element) => element.tagihan.isPaid == 0)
-                          .length
-                          .toString(),
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.request_page_outlined,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Total',
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Rp. ${moneyFormat('$totalBayar')}',
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  ),
+                )
         ],
       ),
     );
@@ -266,10 +281,12 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                   ),
                 ),
-                Text(
-                  widget.nopel,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    widget.nopel,
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -299,10 +316,13 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                   ),
                 ),
-                Text(
-                  nama,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    nama,
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 SizedBox(
@@ -332,10 +352,13 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                   ),
                 ),
-                Text(
-                  alamat,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    alamat,
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 SizedBox(
@@ -365,10 +388,12 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                   ),
                 ),
-                Text(
-                  gol,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    gol,
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -398,10 +423,12 @@ class _TagihanRiwayatState extends State<TagihanRiwayat> {
                     ),
                   ),
                 ),
-                Text(
-                  (status == '1') ? 'Aktif' : 'Tidak Aktif',
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    (status == '1') ? 'Aktif' : 'Tidak Aktif',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SizedBox(
